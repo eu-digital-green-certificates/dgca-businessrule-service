@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  postgres:
+    image: library/postgres:9.6
+    container_name: dgca-businessrule-service-postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    restart: unless-stopped
+    networks:
+      persistence:
+
+  backend:
+    build: .
+    image: eu-digital-green-certificates/dgca-businessrule-service
+    container_name: dgca-businessrule-service
+    ports:
+      - 8080:8080
+    volumes:
+      - ./certs:/ec/prod/app/san/dgc
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_PROFILES_ACTIVE=cloud
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dgca-businessrule-service-postgres:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - DGC_GATEWAY_CONNECTOR_ENDPOINT=https://test-dgcg-ws.tech.ec.europa.eu
+      - DGC_GATEWAY_CONNECTOR_TLSTRUSTSTORE_PATH=file:/ec/prod/app/san/dgc/dgcg_tst_digit.p12
+      - DGC_GATEWAY_CONNECTOR_TLSTRUSTSTORE_PASSWORD=dgcg-p4ssw0rd
+      - DGC_GATEWAY_CONNECTOR_TLSKEYSTORE_ALIAS=1
+      - DGC_GATEWAY_CONNECTOR_TLSKEYSTORE_PATH=file:/ec/prod/app/san/dgc/dgcg_tst_auth.p12
+      - DGC_GATEWAY_CONNECTOR_TLSKEYSTORE_PASSWORD=dgcg-p4ssw0rd
+      - DGC_GATEWAY_CONNECTOR_TRUSTANCHOR_ALIAS=ta_tst
+      - DGC_GATEWAY_CONNECTOR_TRUSTANCHOR_PATH=file:/ec/prod/app/san/dgc/ta_tst.jks
+      - DGC_GATEWAY_CONNECTOR_TRUSTANCHOR_PASSWORD=dgcg-p4ssw0rd
+    depends_on:
+      - postgres
+    networks:
+      backend:
+      persistence:
+
+networks:
+  backend:
+  persistence:
