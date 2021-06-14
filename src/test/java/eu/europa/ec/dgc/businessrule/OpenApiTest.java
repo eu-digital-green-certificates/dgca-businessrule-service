@@ -1,6 +1,6 @@
 package eu.europa.ec.dgc.businessrule;
 
-import eu.europa.ec.dgc.gateway.connector.DgcGatewayDownloadConnector;
+
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.net.URL;
@@ -21,8 +21,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 )
 class OpenApiTest {
 
-    @MockBean
-    private DgcGatewayDownloadConnector dgcGatewayDownloadConnector;
 
     @Test
     void apiDocs() {
