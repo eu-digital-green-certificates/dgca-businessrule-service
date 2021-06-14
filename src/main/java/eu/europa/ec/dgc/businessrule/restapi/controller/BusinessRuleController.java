@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/business-rule-sets")
+@RequestMapping("/businessrules")
 @Slf4j
 @RequiredArgsConstructor
 public class BusinessRuleController {
@@ -50,7 +50,7 @@ public class BusinessRuleController {
      * Http Method for getting the business rule provider list.
      */
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getBusinessRuleProviderList() {
+    public ResponseEntity<String> getBusinessRules() {
         Resource resource = new ClassPathResource("/static/businessRuleProviderList.json");
         try {
             HttpHeaders responseHeaders = new HttpHeaders();
@@ -71,7 +71,7 @@ public class BusinessRuleController {
      * Http Method for getting  specific business rule set .
      */
     @GetMapping(path = "/{hash}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getBusinessRuleSet(
+    public ResponseEntity<String> getBusinessRuleByHash(
         @Valid @PathVariable("hash") String hash
     ) {
         Resource resource = new ClassPathResource("/static/businessRuleSet.json");
