@@ -92,8 +92,9 @@ public class BusinessRuleController {
     /**
      * Http Method for getting  specific business rule set .
      */
-    @GetMapping(path = "/{hash}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{country}/{hash}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getRuleByHash(
+        @Valid @PathVariable("country") String country,
         @Valid @PathVariable("hash") String hash
     ) {
         Resource resource = new ClassPathResource("/static/businessRuleSet.json");
