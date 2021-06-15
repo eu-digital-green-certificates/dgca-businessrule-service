@@ -1,8 +1,18 @@
-[
-  {
-    "dataset": "No Data Yet"
-  },
-  {
-    "dataset": "No Data Yet"
+{
+  "Identifier": "GR-CZ-0001",
+  "Version": "1.0.0",
+  "SchemaVersion":"1.0.0",
+  "Engine":"CERTLOGIC",
+  "EngineVersion":"1.0.0",
+  "Type":"Test",
+  "Description":"The Field “Doses” MUST contain number 2 OR 2/2.",
+  "ValidFrom":"2021-05-27T07:46:40Z",
+  "ValidTo":"2021-06-01T07:46:40Z",
+  "AffectedFields":["dt","nm"],
+  "Logic":{
+    "and": [
+      {">=":[ {"var":"dt"}, "23.12.2012" ]},
+      {">=":[ {"var":"nm"}, "ABC" ]}
+    ]
   }
-]
+}
