@@ -33,13 +33,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/businessrules")
+@RequestMapping("/rules")
 @Slf4j
 @RequiredArgsConstructor
 public class BusinessRuleController {
@@ -47,10 +46,33 @@ public class BusinessRuleController {
     private static final String X_SIGNATURE_HEADER = "X-SIGNATURE";
 
     /**
-     * Http Method for getting the business rule provider list.
+     * Http Method for getting the business rules list.
      */
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getBusinessRules() {
+    public ResponseEntity<String> getRules() {
+        Resource resource = new ClassPathResource("/static/businessRuleProviderList.json");
+        try {
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.set(X_SIGNATURE_HEADER, "ECDSA_NOT_CALCULATED_YET");
+
+            return  ResponseEntity.ok()
+                .headers(responseHeaders)
+                .body(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
+
+        } catch (IOException e) {
+            log.error("Could not read business rule provider list file");
+        }
+        return ResponseEntity.ok("");
+    }
+
+
+    /**
+     * Http Method for getting the business rules list for a country.
+     */
+    @GetMapping(path = "/{country}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> getRulesForCountry(
+        @Valid @PathVariable("country") String country
+    ) {
         Resource resource = new ClassPathResource("/static/businessRuleProviderList.json");
         try {
             HttpHeaders responseHeaders = new HttpHeaders();
@@ -71,7 +93,7 @@ public class BusinessRuleController {
      * Http Method for getting  specific business rule set .
      */
     @GetMapping(path = "/{hash}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getBusinessRuleByHash(
+    public ResponseEntity<String> getRuleByHash(
         @Valid @PathVariable("hash") String hash
     ) {
         Resource resource = new ClassPathResource("/static/businessRuleSet.json");
