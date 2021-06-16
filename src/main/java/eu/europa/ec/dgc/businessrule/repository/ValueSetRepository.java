@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ValueSetRepository extends JpaRepository<ValueSetEntity, String> {
+
     List<ValueSetListItemDto> findAllByOrderByIdAsc();
 
     ValueSetEntity findOneByHash(String hash);

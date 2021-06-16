@@ -53,7 +53,6 @@ public class ValueSetController {
 
     private final ValueSetService valueSetService;
 
-    private static final String X_SIGNATURE_HEADER = "X-SIGNATURE";
 
     /**
      * Http Method for getting the value set list.
@@ -81,7 +80,7 @@ public class ValueSetController {
     }
 
     /**
-     * Http Method for getting  specific value set .
+     * Http Method for loading sample value sets from resources .
      */
     @GetMapping(path = "/loaddummy", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> loadDummyData() {

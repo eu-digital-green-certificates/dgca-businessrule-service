@@ -20,6 +20,7 @@
 
 package eu.europa.ec.dgc.businessrule.config;
 
+import eu.europa.ec.dgc.businessrule.exception.DgcaBusinessRulesResponseException;
 import eu.europa.ec.dgc.businessrule.restapi.dto.ProblemReportDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,10 +49,11 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemReportDto> handleException(Exception e) {
         if (e instanceof ResponseStatusException) {
+            DgcaBusinessRulesResponseException de = (DgcaBusinessRulesResponseException) e;
             return ResponseEntity
                 .status(((ResponseStatusException) e).getStatus())
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new ProblemReportDto("co", "prob", "val", "det"));
+                .body(new ProblemReportDto(de.getCode(), de.getProblem(), de.getSentValues(), de.getDetails()));
         } else {
             log.error("Uncatched exception", e);
             return ResponseEntity
