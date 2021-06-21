@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BusinessRuleRepository extends JpaRepository<BusinessRuleEntity, String> {
 
-    List<BusinessRuleListItemDto> findAllByOrderByIdAsc();
+    List<BusinessRuleListItemDto> findAllByOrderByIdentifierAsc();
 
-    List<BusinessRuleListItemDto> findAllByCountryOrderByIdAsc(String country);
+    List<BusinessRuleListItemDto> findAllByCountryOrderByIdentifierAsc(String country);
 
-    BusinessRuleEntity findOneByHash(String hash);
+    BusinessRuleEntity findOneByCountryAndHash(String country, String hash);
 }

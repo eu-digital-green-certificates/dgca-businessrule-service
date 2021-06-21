@@ -1,10 +1,8 @@
 package eu.europa.ec.dgc.businessrule.service;
 
 import eu.europa.ec.dgc.businessrule.entity.BusinessRuleEntity;
-import eu.europa.ec.dgc.businessrule.entity.ValueSetEntity;
 import eu.europa.ec.dgc.businessrule.repository.BusinessRuleRepository;
 import eu.europa.ec.dgc.businessrule.restapi.dto.BusinessRuleListItemDto;
-import eu.europa.ec.dgc.businessrule.restapi.dto.ValueSetListItemDto;
 import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -39,7 +37,7 @@ public class BusinessRuleService {
         }
 
         BusinessRuleEntity bre = new BusinessRuleEntity();
-        bre.setId(ruleId);
+        bre.setIdentifier(ruleId);
         bre.setCountry(ruleCountry);
         bre.setRawData(ruleData.toUpperCase(Locale.ROOT));
         bre.setHash(hash);
@@ -52,7 +50,7 @@ public class BusinessRuleService {
      */
     public List<BusinessRuleListItemDto> getBusinessRulesList() {
 
-        List<BusinessRuleListItemDto> rulesItems = businessRuleRepository.findAllByOrderByIdAsc();
+        List<BusinessRuleListItemDto> rulesItems = businessRuleRepository.findAllByOrderByIdentifierAsc();
         return rulesItems;
     }
 
@@ -62,7 +60,7 @@ public class BusinessRuleService {
     public List<BusinessRuleListItemDto> getBusinessRulesListForCountry(String country) {
 
         List<BusinessRuleListItemDto> rulesItems =
-            businessRuleRepository.findAllByCountryOrderByIdAsc(country.toUpperCase(Locale.ROOT));
+            businessRuleRepository.findAllByCountryOrderByIdentifierAsc(country.toUpperCase(Locale.ROOT));
         return rulesItems;
     }
 
@@ -71,8 +69,8 @@ public class BusinessRuleService {
      *  Gets  a business rule by hash.
      */
     @Transactional
-    public BusinessRuleEntity getBusinessRuleByHash(String hash) {
+    public BusinessRuleEntity getBusinessRuleByCountryAndHash(String country, String hash) {
 
-        return  businessRuleRepository.findOneByHash(hash);
+        return  businessRuleRepository.findOneByCountryAndHash(country, hash);
     }
 }

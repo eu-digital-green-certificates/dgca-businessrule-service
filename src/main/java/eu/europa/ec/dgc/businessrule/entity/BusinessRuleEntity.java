@@ -19,18 +19,22 @@ import lombok.Setter;
 @Entity
 @Table(name = "business_rules")
 public class BusinessRuleEntity {
-    @Id
-    @Column(name = "id", nullable = false)
-    private String id;
-
-    @Column(name = "country_code", nullable = false, length = 2)
-    String country;
 
     /**
      * SHA-256 Thumbprint of the rule (hex encoded).
      */
-    @Column(name = "thumbprint", nullable = false, length = 64)
+    @Id
+    @Column(name = "hash", nullable = false, length = 64)
     private String hash;
+
+    @Column(name = "identifier_name", nullable = false)
+    private String identifier;
+
+    @Column(name = "version", nullable = false)
+    String version = "1.0.0";
+
+    @Column(name = "country_code", nullable = false, length = 2)
+    String country;
 
     @Lob
     @Column(name = "raw_data", nullable = false)
