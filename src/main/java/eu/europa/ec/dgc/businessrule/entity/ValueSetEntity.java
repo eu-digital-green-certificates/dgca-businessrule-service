@@ -20,15 +20,15 @@ import lombok.Setter;
 @Entity
 @Table(name = "valuesets")
 public class ValueSetEntity {
-    @Id
-    @Column(name = "id")
-    private String id;
-
     /**
      * SHA-256 Thumbprint of the valueset (hex encoded).
      */
-    @Column(name = "thumbprint", nullable = false, length = 64)
+    @Id
+    @Column(name = "hash", nullable = false, length = 64)
     private String hash;
+
+    @Column(name = "identifier_name")
+    private String id;
 
     @Lob
     @Column(name = "raw_data", nullable = false)
