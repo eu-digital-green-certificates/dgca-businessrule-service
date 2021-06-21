@@ -29,11 +29,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("dgc")
 public class DgcConfigProperties {
 
-    private final CertificatesDownloader certificatesDownloader = new CertificatesDownloader();
+    private final GatewayDownload gatewayDownload = new GatewayDownload();
 
     @Getter
     @Setter
-    public static class CertificatesDownloader {
+    public static class GatewayDownload {
         private Integer timeInterval;
         private Integer lockLimit;
     }

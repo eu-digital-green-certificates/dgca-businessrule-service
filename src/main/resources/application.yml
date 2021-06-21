@@ -11,7 +11,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
   liquibase:
     change-log: classpath:db/changelog.xml
   h2:
@@ -44,7 +44,8 @@ springdoc:
   swagger-ui:
     path: /swagger
 dgc:
-  certificatesDownloader:
+  gatewayDownload:
     timeInterval: 60000
     lockLimit: 1800000
+
 
