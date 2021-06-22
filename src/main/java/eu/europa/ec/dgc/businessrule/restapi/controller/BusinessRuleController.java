@@ -58,6 +58,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BusinessRuleController {
 
+    private static final String API_VERSION_HEADER = "X-VERSION";
     private final BusinessRuleService businessRuleService;
 
     private static final String X_SIGNATURE_HEADER = "X-SIGNATURE";
@@ -94,7 +95,9 @@ public class BusinessRuleController {
                     array = @ArraySchema(schema = @Schema(implementation = BusinessRuleListItemDto.class))))
         }
     )
-    public ResponseEntity<List<BusinessRuleListItemDto>> getRules() {
+    public ResponseEntity<List<BusinessRuleListItemDto>> getRules(
+        @RequestHeader(value = API_VERSION_HEADER, required = false ) String apiVersion
+    ) {
 
         return ResponseEntity.ok(businessRuleService.getBusinessRulesList());
     }
@@ -140,6 +143,7 @@ public class BusinessRuleController {
         }
     )
     public ResponseEntity<List<BusinessRuleListItemDto>> getRulesForCountry(
+        @RequestHeader(value = API_VERSION_HEADER, required = false ) String apiVersion,
         @Valid @PathVariable("country") String country
     ) {
         validateCountryParameter(country);
@@ -220,7 +224,8 @@ public class BusinessRuleController {
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = ProblemReportDto.class)))
         })
-    public ResponseEntity<String> getRuleByHash(
+    public ResponseEntity<String> getRuleByCountryAndHash(
+        @RequestHeader(value = API_VERSION_HEADER, required = false ) String apiVersion,
         @Valid @PathVariable("country") String country,
         @Valid @PathVariable("hash") String hash
     ) {

@@ -53,6 +53,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -61,6 +62,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 public class ValueSetController {
+
+    private static final String API_VERSION_HEADER = "X-VERSION";
 
     private final BusinessRulesUtils businessRulesUtils;
 
@@ -135,8 +138,9 @@ public class ValueSetController {
                     }))
         }
     )
-    public ResponseEntity<List<ValueSetListItemDto>> getValueSetList() {
-
+    public ResponseEntity<List<ValueSetListItemDto>> getValueSetList(
+        @RequestHeader(value = API_VERSION_HEADER, required = false ) String apiVersion
+    ) {
         return ResponseEntity.ok(valueSetService.getValueSetsList());
     }
 
@@ -194,6 +198,7 @@ public class ValueSetController {
                 ))
         })
     public ResponseEntity<String> getValueSet(
+        @RequestHeader(value = API_VERSION_HEADER, required = false ) String apiVersion,
         @Valid @PathVariable("hash") String hash
     ) {
         ValueSetEntity vse = valueSetService.getValueSetByHash(hash);
