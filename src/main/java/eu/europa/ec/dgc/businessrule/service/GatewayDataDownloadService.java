@@ -18,29 +18,23 @@
  * ---license-end
  */
 
-package eu.europa.ec.dgc.businessrule.config;
+package eu.europa.ec.dgc.businessrule.service;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+public interface GatewayDataDownloadService {
 
-@Getter
-@Setter
-@ConfigurationProperties("dgc")
-public class DgcConfigProperties {
+    /**
+     * Synchronises the business rules with the gateway.
+     */
+    void downloadBusinessRules();
 
-    private final GatewayDownload businessRulesDownload = new GatewayDownload();
+    /**
+     * Synchronises the value sets with the gateway.
+     */
+    void downloadValueSets();
 
-    private final GatewayDownload valueSetsDownload = new GatewayDownload();
-
-    private final GatewayDownload countryListDownload = new GatewayDownload();
-
-    @Getter
-    @Setter
-    public static class GatewayDownload {
-        private Integer timeInterval;
-        private Integer lockLimit;
-    }
-
+    /**
+     * Synchronises the country list with the gateway.
+     */
+    void downloadCountryList();
 
 }
