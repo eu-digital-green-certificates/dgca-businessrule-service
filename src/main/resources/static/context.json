@@ -1,0 +1,41 @@
+{
+  "origin": "DE",
+  "versions": {
+    "default": {
+      "privacyUrl": "https://publications.europa.eu/en/web/about-us/legal-notices/eu-mobile-apps",
+      "context": {
+        "url": "https://issuance-dgca-test.cfapps.eu10.hana.ondemand.com/dgca-businessrule-service/context",
+        "pubKeys": [
+          "lKdU1EbQubxyDDm2q3N8KclZ2C94Num3xXjG0pk+3eI=",
+          "r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E="
+        ]
+      },
+      "endpoints": {
+        "rules": {
+          "url": "https://issuance-dgca-test.cfapps.eu10.hana.ondemand.com/dgca-businessrule-service/rules",
+          "pubKeys": [
+            "lKdU1EbQubxyDDm2q3N8KclZ2C94Num3xXjG0pk+3eI=",
+            "r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E="
+          ]
+        },
+        "countryList": {
+          "url": "https://issuance-dgca-test.cfapps.eu10.hana.ondemand.com/dgca-businessrule-service/countryList",
+          "pubKeys": [
+            "lKdU1EbQubxyDDm2q3N8KclZ2C94Num3xXjG0pk+3eI=",
+            "r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E="
+          ]
+        },
+        "valuesets": {
+          "url": "https://issuance-dgca-test.cfapps.eu10.hana.ondemand.com/dgca-businessrule-service/valuesets",
+          "pubKeys": [
+            "lKdU1EbQubxyDDm2q3N8KclZ2C94Num3xXjG0pk+3eI=",
+            "r/mIkG3eEpVdm+u/ko/cwxzOMo1bk4TyHIlByibiA5E="
+          ]
+        }
+      }
+    },
+    "0.1.0": {
+      "outdated": true
+    }
+  }
+}
