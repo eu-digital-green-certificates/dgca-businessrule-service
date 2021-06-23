@@ -20,10 +20,18 @@
 
 package eu.europa.ec.dgc.businessrule.service;
 
-//import eu.europa.ec.dgc.gateway.connector.DgcGatewayDownloadConnector;
+import eu.europa.ec.dgc.businessrule.mapper.BusinessRuleMapper;
+import eu.europa.ec.dgc.businessrule.model.BusinessRuleItem;
+import eu.europa.ec.dgc.businessrule.model.ValueSetItem;
+import eu.europa.ec.dgc.gateway.connector.DgcGatewayCountryListDownloadConnector;
+import eu.europa.ec.dgc.gateway.connector.DgcGatewayValidationRuleDownloadConnector;
+import eu.europa.ec.dgc.gateway.connector.DgcGatewayValueSetDownloadConnector;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import net.minidev.json.JSONArray;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -38,16 +46,37 @@ import org.springframework.stereotype.Component;
 @Profile("!btp")
 public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadService {
 
-    //private final DgcGatewayDownloadConnector dgcGatewayConnector;
+    private final DgcGatewayValidationRuleDownloadConnector dgcRuleConnector;
+
+    private final DgcGatewayValueSetDownloadConnector dgcValueSetConnector;
+
+    private final DgcGatewayCountryListDownloadConnector dgcCountryListConnector;
+
+    private final BusinessRuleMapper businessRuleMapper;
+
+    private final BusinessRuleService businessRuleService;
+
+    private final ValueSetService valueSetService;
+
+    private final CountryListService countryListService;
 
     @Override
     @Scheduled(fixedDelayString = "${dgc.businessRulesDownload.timeInterval}")
     @SchedulerLock(name = "GatewayDataDownloadService_downloadBusinessRules", lockAtLeastFor = "PT0S",
         lockAtMostFor = "${dgc.businessRulesDownload.lockLimit}")
     public void downloadBusinessRules() {
+        List<BusinessRuleItem> ruleItems;
+
         log.info("Business rules download started");
 
+        try {
+            ruleItems = businessRuleMapper.map(dgcRuleConnector.getValidationRules().flat());
+        } catch (NoSuchAlgorithmException e) {
+            log.error("Failed to hash business rules on download.",e);
+            return;
+        }
 
+        businessRuleService.updateBusinesRules(ruleItems);
 
         log.info("Business rules finished");
     }
@@ -57,9 +86,17 @@ public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadServic
     @SchedulerLock(name = "GatewayDataDownloadService_downloadValueSets", lockAtLeastFor = "PT0S",
         lockAtMostFor = "${dgc.valueSetsDownload.lockLimit}")
     public void downloadValueSets() {
+        List<ValueSetItem> valueSetItems;
         log.info("Valuesets download started");
 
+        try {
+            valueSetItems = valueSetService.createValueSetItemListFromMap(dgcValueSetConnector.getValueSets());
+        } catch (NoSuchAlgorithmException e) {
+            log.error("Failed to hash business rules on download.",e);
+            return;
+        }
 
+        valueSetService.updateValueSets(valueSetItems);
 
         log.info("Valuesets download finished");
     }
@@ -71,7 +108,9 @@ public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadServic
     public void downloadCountryList() {
         log.info("Country list download started");
 
-
+        List<String> countryList = dgcCountryListConnector.getCountryList();
+        String countryListJsonStr = JSONArray.toJSONString(countryList);
+        countryListService.updateCountryList(countryListJsonStr);
 
         log.info("country list download finished");
     }

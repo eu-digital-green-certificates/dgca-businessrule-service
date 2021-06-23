@@ -25,7 +25,10 @@ import eu.europa.ec.dgc.businessrule.model.ValueSetItem;
 import eu.europa.ec.dgc.businessrule.repository.ValueSetRepository;
 import eu.europa.ec.dgc.businessrule.restapi.dto.ValueSetListItemDto;
 import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -97,6 +100,26 @@ public class ValueSetService {
         vse.setRawData(valueSetData);
 
         valueSetRepository.save(vse);
+    }
+
+    /**
+     * Creates a List of value set items from a map of value sets without hashes.
+     * @param valueSetMap the map containing the row value sets.
+     * @return List of ValueSetItems
+     */
+    public List<ValueSetItem> createValueSetItemListFromMap(Map<String, String> valueSetMap)
+        throws NoSuchAlgorithmException {
+        List<ValueSetItem> valueSetItems = new ArrayList<>();
+
+        for (Map.Entry<String, String> vse: valueSetMap.entrySet()) {
+            ValueSetItem valueSetItem = new ValueSetItem();
+            valueSetItem.setHash(businessRulesUtils.calculateHash(vse.getValue()));
+            valueSetItem.setId(vse.getKey());
+            valueSetItem.setRawData(vse.getValue());
+            valueSetItems.add(valueSetItem);
+        }
+
+        return valueSetItems;
     }
 
     /**
