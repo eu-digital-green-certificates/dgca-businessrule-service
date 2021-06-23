@@ -35,9 +35,9 @@
         </createTable>
     </changeSet>
     <changeSet id="1624279656451-3" author="slaurenz (generated)">
-        <createTable tableName="shedlock">
+        <createTable tableName="shedlock_br">
             <column autoIncrement="true" name="id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SHEDLOCK"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SHEDLOCK_BR"/>
             </column>
             <column name="name" type="VARCHAR(64)">
                 <constraints nullable="false"/>
@@ -65,7 +65,7 @@
         </createTable>
     </changeSet>
     <changeSet id="1624279656451-5" author="slaurenz (generated)">
-        <addUniqueConstraint columnNames="name" constraintName="UC_SHEDLOCK_NAME" tableName="shedlock"/>
+        <addUniqueConstraint columnNames="name" constraintName="UC_SHEDLOCK_BR_NAME" tableName="shedlock_br"/>
     </changeSet>
 
 </databaseChangeLog>
