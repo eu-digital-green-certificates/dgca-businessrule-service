@@ -30,4 +30,6 @@ public interface ValueSetRepository extends JpaRepository<ValueSetEntity, String
     List<ValueSetListItemDto> findAllByOrderByIdAsc();
 
     ValueSetEntity findOneByHash(String hash);
+
+    void deleteByHashNotIn(List<String> hashes);
 }

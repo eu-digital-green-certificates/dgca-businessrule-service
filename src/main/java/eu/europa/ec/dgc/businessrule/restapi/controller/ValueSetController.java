@@ -139,7 +139,7 @@ public class ValueSetController {
         }
     )
     public ResponseEntity<List<ValueSetListItemDto>> getValueSetList(
-        @RequestHeader(value = API_VERSION_HEADER, required = false ) String apiVersion
+        @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion
     ) {
         return ResponseEntity.ok(valueSetService.getValueSetsList());
     }
@@ -198,7 +198,7 @@ public class ValueSetController {
                 ))
         })
     public ResponseEntity<String> getValueSet(
-        @RequestHeader(value = API_VERSION_HEADER, required = false ) String apiVersion,
+        @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion,
         @Valid @PathVariable("hash") String hash
     ) {
         ValueSetEntity vse = valueSetService.getValueSetByHash(hash);
@@ -231,12 +231,21 @@ public class ValueSetController {
 
     private void loadValuesetFile(String filename, String valueSetName) {
         Resource resource = new ClassPathResource(filename);
+        String rawData;
+        String hash;
         try {
-            valueSetService.saveValueSet(valueSetName,
-                IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
+            rawData = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+            hash = businessRulesUtils.calculateHash(rawData);
+
+        } catch (NoSuchAlgorithmException e) {
+            log.error("Calculation of hash failed:", e);
+            return;
         } catch (IOException e) {
             log.error("Could not read file: " + valueSetName);
+            return;
         }
+
+        valueSetService.saveValueSet(hash, valueSetName, rawData);
     }
 
 }
