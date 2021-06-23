@@ -11,9 +11,11 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
   liquibase:
     change-log: classpath:db/changelog.xml
+    database-change-log-table: BR_CHANGELOG
+    database-change-log-lock-table: BR_CHANGELOG_LOCK
   h2:
     console:
       enabled: true

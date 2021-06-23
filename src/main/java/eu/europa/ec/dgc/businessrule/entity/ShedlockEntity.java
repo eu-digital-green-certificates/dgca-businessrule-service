@@ -29,7 +29,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "shedlock")
+@Table(name = "shedlock_br")
 public class ShedlockEntity {
 
     @Id
