@@ -49,6 +49,20 @@ public class CountryListService {
         }
     }
 
+
+    /**
+     * Updates a country List, if it is different from the old one.
+     * @param newCountryListData new country list data
+     */
+    @Transactional
+    public void updateCountryList(String newCountryListData) {
+        String oldList = getCountryList();
+        if (!newCountryListData.equals(oldList)) {
+            saveCountryList(newCountryListData);
+        }
+    }
+
+
     /**
      *  Saves a country list by replacing an old one.
      */
@@ -58,6 +72,8 @@ public class CountryListService {
         CountryListEntity cle = new CountryListEntity(COUNTRY_LIST_ID,listData);
         countryListRepository.save(cle);
     }
+
+
 
 
 }

@@ -21,12 +21,16 @@
 package eu.europa.ec.dgc.businessrule.service;
 
 import eu.europa.ec.dgc.businessrule.entity.BusinessRuleEntity;
+import eu.europa.ec.dgc.businessrule.model.BusinessRuleItem;
+import eu.europa.ec.dgc.businessrule.model.ValueSetItem;
 import eu.europa.ec.dgc.businessrule.repository.BusinessRuleRepository;
 import eu.europa.ec.dgc.businessrule.restapi.dto.BusinessRuleListItemDto;
+import eu.europa.ec.dgc.businessrule.restapi.dto.ValueSetListItemDto;
 import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,35 +42,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class BusinessRuleService {
 
-    private final BusinessRulesUtils businessRulesUtils;
-
     private final BusinessRuleRepository businessRuleRepository;
 
     /**
-     *  Saves a Business rule.
-     *
-     */
-    @Transactional
-    public void saveBusinessRule(String ruleId, String ruleCountry, String ruleData) {
-        String hash;
-        try {
-            hash = businessRulesUtils.calculateHash(ruleData);
-        } catch (NoSuchAlgorithmException e) {
-            log.error("Calculation of hash failed:", e);
-            return;
-        }
-
-        BusinessRuleEntity bre = new BusinessRuleEntity();
-        bre.setIdentifier(ruleId);
-        bre.setCountry(ruleCountry);
-        bre.setRawData(ruleData.toUpperCase(Locale.ROOT));
-        bre.setHash(hash);
-
-        businessRuleRepository.save(bre);
-    }
-
-    /**
      *  Gets list of all business rules ids and hashes.
+     *
      */
     public List<BusinessRuleListItemDto> getBusinessRulesList() {
 
@@ -84,7 +64,6 @@ public class BusinessRuleService {
         return rulesItems;
     }
 
-
     /**f
      *  Gets  a business rule by hash.
      */
@@ -92,5 +71,53 @@ public class BusinessRuleService {
     public BusinessRuleEntity getBusinessRuleByCountryAndHash(String country, String hash) {
 
         return  businessRuleRepository.findOneByCountryAndHash(country, hash);
+    }
+
+    /**
+     * Updates the list of business rules.
+     * @param businessRules list of actual value sets
+     */
+    @Transactional
+    public void updateBusinesRules(List<BusinessRuleItem> businessRules) {
+        List<String> ruleHashes =
+            businessRules.stream().map(BusinessRuleItem::getHash).collect(Collectors.toList());
+        List<String> alreadyStoredRules = getBusinessRulesHashList();
+
+        if (ruleHashes.isEmpty()) {
+            businessRuleRepository.deleteAll();
+        } else {
+            businessRuleRepository.deleteByHashNotIn(ruleHashes);
+        }
+
+        for (BusinessRuleItem rule : businessRules) {
+            if (!alreadyStoredRules.contains(rule.getHash())) {
+                saveBusinessRule(rule.getHash(), rule.getIdentifier(),rule.getCountry(), rule.getRawData());
+            }
+        }
+
+    }
+
+    /**
+     *  Saves a Business rule.
+     *
+     */
+    @Transactional
+    public void saveBusinessRule(String hash, String ruleId, String ruleCountry, String ruleData) {
+        BusinessRuleEntity bre = new BusinessRuleEntity();
+        bre.setHash(hash);
+        bre.setIdentifier(ruleId);
+        bre.setCountry(ruleCountry.toUpperCase(Locale.ROOT));
+        bre.setRawData(ruleData);
+        bre.setHash(hash);
+
+        businessRuleRepository.save(bre);
+    }
+
+    /**
+     * Gets a list of hash values of all stored business rules.
+     * @return List of hash values
+     */
+    private List<String> getBusinessRulesHashList() {
+        return getBusinessRulesList().stream().map(BusinessRuleListItemDto::getHash).collect(Collectors.toList());
     }
 }

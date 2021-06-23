@@ -25,6 +25,7 @@ import eu.europa.ec.dgc.businessrule.exception.DgcaBusinessRulesResponseExceptio
 import eu.europa.ec.dgc.businessrule.restapi.dto.BusinessRuleListItemDto;
 import eu.europa.ec.dgc.businessrule.restapi.dto.ProblemReportDto;
 import eu.europa.ec.dgc.businessrule.service.BusinessRuleService;
+import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,6 +36,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Locale;
 import javax.validation.Valid;
@@ -59,9 +61,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class BusinessRuleController {
 
     private static final String API_VERSION_HEADER = "X-VERSION";
-    private final BusinessRuleService businessRuleService;
 
     private static final String X_SIGNATURE_HEADER = "X-SIGNATURE";
+
+    private final BusinessRuleService businessRuleService;
+
+    private final BusinessRulesUtils businessRulesUtils;
 
     /**
      * Http Method for getting the business rules list.
@@ -96,7 +101,7 @@ public class BusinessRuleController {
         }
     )
     public ResponseEntity<List<BusinessRuleListItemDto>> getRules(
-        @RequestHeader(value = API_VERSION_HEADER, required = false ) String apiVersion
+        @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion
     ) {
 
         return ResponseEntity.ok(businessRuleService.getBusinessRulesList());
@@ -143,7 +148,7 @@ public class BusinessRuleController {
         }
     )
     public ResponseEntity<List<BusinessRuleListItemDto>> getRulesForCountry(
-        @RequestHeader(value = API_VERSION_HEADER, required = false ) String apiVersion,
+        @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion,
         @Valid @PathVariable("country") String country
     ) {
         validateCountryParameter(country);
@@ -225,7 +230,7 @@ public class BusinessRuleController {
                     schema = @Schema(implementation = ProblemReportDto.class)))
         })
     public ResponseEntity<String> getRuleByCountryAndHash(
-        @RequestHeader(value = API_VERSION_HEADER, required = false ) String apiVersion,
+        @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion,
         @Valid @PathVariable("country") String country,
         @Valid @PathVariable("hash") String hash
     ) {
@@ -254,13 +259,22 @@ public class BusinessRuleController {
         @RequestHeader(value = "X_ID") String id,
         @RequestBody String ruleData) {
 
+        String hash;
         validateCountryParameter(country);
 
         if (id == null || id.isBlank()) {
             throw new DgcaBusinessRulesResponseException(HttpStatus.BAD_REQUEST, "0x003", "Possible reasons: "
                 + "The id of the rule is not set.", id,"");
         }
-        businessRuleService.saveBusinessRule(id, country.toUpperCase(Locale.ROOT), ruleData);
+
+        try {
+            hash = businessRulesUtils.calculateHash(ruleData);
+        } catch (NoSuchAlgorithmException e) {
+            log.error("Calculation of hash failed:", e);
+            throw new DgcaBusinessRulesResponseException(HttpStatus.INTERNAL_SERVER_ERROR, "0x500",
+                "Internal Server Error","","");
+        }
+        businessRuleService.saveBusinessRule(hash, id, country, ruleData);
         return ResponseEntity.ok("Upload: OK");
 
     }

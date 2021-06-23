@@ -90,7 +90,7 @@ public class CountryListController {
         }
     )
     public ResponseEntity<String> getCountryList(
-        @RequestHeader(value = API_VERSION_HEADER, required = false ) String apiVersion
+        @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion
     ) {
         return ResponseEntity.ok(countryListService.getCountryList());
     }
