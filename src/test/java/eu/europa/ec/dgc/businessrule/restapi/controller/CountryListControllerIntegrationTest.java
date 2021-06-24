@@ -22,11 +22,15 @@ package eu.europa.ec.dgc.businessrule.restapi.controller;
 
 import eu.europa.ec.dgc.businessrule.entity.CountryListEntity;
 import eu.europa.ec.dgc.businessrule.repository.CountryListRepository;
+import eu.europa.ec.dgc.gateway.connector.DgcGatewayCountryListDownloadConnector;
+import eu.europa.ec.dgc.gateway.connector.DgcGatewayValidationRuleDownloadConnector;
+import eu.europa.ec.dgc.gateway.connector.DgcGatewayValueSetDownloadConnector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -42,6 +46,15 @@ class CountryListControllerIntegrationTest {
     private static final String TEST_LIST_DATA = "[\"BE\", \"EL\", \"LT\", \"PT\", \"BG\", \"ES\", \"LU\", \"RO\", "
         + "\"CZ\", \"FR\", \"HU\", \"SI\", \"DK\", \"HR\", \"MT\", \"SK\", \"DE\", \"IT\", \"NL\", \"FI\", \"EE\", "
         + "\"CY\", \"AT\", \"SE\", \"IE\", \"LV\", \"PL\"]";
+
+    @MockBean
+    DgcGatewayValidationRuleDownloadConnector dgcGatewayValidationRuleDownloadConnector;
+
+    @MockBean
+    DgcGatewayValueSetDownloadConnector dgcGatewayValueSetDownloadConnector;
+
+    @MockBean
+    DgcGatewayCountryListDownloadConnector dgcGatewayCountryListDownloadConnector;
 
     @Autowired
     CountryListRepository countryListRepository;

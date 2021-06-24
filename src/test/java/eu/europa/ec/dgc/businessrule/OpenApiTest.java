@@ -21,6 +21,9 @@
 package eu.europa.ec.dgc.businessrule;
 
 
+import eu.europa.ec.dgc.gateway.connector.DgcGatewayCountryListDownloadConnector;
+import eu.europa.ec.dgc.gateway.connector.DgcGatewayValidationRuleDownloadConnector;
+import eu.europa.ec.dgc.gateway.connector.DgcGatewayValueSetDownloadConnector;
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
 import java.net.URL;
@@ -41,6 +44,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 )
 class OpenApiTest {
 
+    @MockBean
+    DgcGatewayValidationRuleDownloadConnector dgcGatewayValidationRuleDownloadConnector;
+
+    @MockBean
+    DgcGatewayValueSetDownloadConnector dgcGatewayValueSetDownloadConnector;
+
+    @MockBean
+    DgcGatewayCountryListDownloadConnector dgcGatewayCountryListDownloadConnector;
 
     @Test
     void apiDocs() {
