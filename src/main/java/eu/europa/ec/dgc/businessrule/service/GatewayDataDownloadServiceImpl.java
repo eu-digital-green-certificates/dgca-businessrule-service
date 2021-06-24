@@ -20,7 +20,6 @@
 
 package eu.europa.ec.dgc.businessrule.service;
 
-import eu.europa.ec.dgc.businessrule.mapper.BusinessRuleMapper;
 import eu.europa.ec.dgc.businessrule.model.BusinessRuleItem;
 import eu.europa.ec.dgc.businessrule.model.ValueSetItem;
 import eu.europa.ec.dgc.gateway.connector.DgcGatewayCountryListDownloadConnector;
@@ -52,8 +51,6 @@ public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadServic
 
     private final DgcGatewayCountryListDownloadConnector dgcCountryListConnector;
 
-    private final BusinessRuleMapper businessRuleMapper;
-
     private final BusinessRuleService businessRuleService;
 
     private final ValueSetService valueSetService;
@@ -70,13 +67,18 @@ public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadServic
         log.info("Business rules download started");
 
         try {
-            ruleItems = businessRuleMapper.map(dgcRuleConnector.getValidationRules().flat());
+            ruleItems = businessRuleService.createBusinessRuleItemList(dgcRuleConnector.getValidationRules().flat());
         } catch (NoSuchAlgorithmException e) {
             log.error("Failed to hash business rules on download.",e);
             return;
         }
 
-        businessRuleService.updateBusinesRules(ruleItems);
+        if (!ruleItems.isEmpty()) {
+            businessRuleService.updateBusinesRules(ruleItems);
+        } else {
+            log.warn("The download of the business rules seems to fail, as the download connector "
+                + "returns an empty list.-> No data was changed.");
+        }
 
         log.info("Business rules finished");
     }
@@ -96,7 +98,12 @@ public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadServic
             return;
         }
 
-        valueSetService.updateValueSets(valueSetItems);
+        if (!valueSetItems.isEmpty()) {
+            valueSetService.updateValueSets(valueSetItems);
+        } else {
+            log.warn("The download of the value sets seems to fail, as the download connector "
+                + "returns an empty list.-> No data was changed.");
+        }
 
         log.info("Valuesets download finished");
     }
@@ -109,10 +116,16 @@ public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadServic
         log.info("Country list download started");
 
         List<String> countryList = dgcCountryListConnector.getCountryList();
-        String countryListJsonStr = JSONArray.toJSONString(countryList);
-        countryListService.updateCountryList(countryListJsonStr);
 
-        log.info("country list download finished");
+        if (!countryList.isEmpty()) {
+            String countryListJsonStr = JSONArray.toJSONString(countryList);
+            countryListService.updateCountryList(countryListJsonStr);
+        } else {
+            log.warn("The download of the country list seems to fail, as the download connector "
+                + "returns an empty list.-> No data was changed.");
+        }
+
+        log.info("Country list download finished");
     }
 
 }
