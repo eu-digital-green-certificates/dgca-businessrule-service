@@ -46,7 +46,7 @@ public class ValueSetService {
 
 
     /**
-     *  gets list of all value set ids and hashes.
+     *  Gets list of all value set ids and hashes.
      */
     public List<ValueSetListItemDto> getValueSetsList() {
 
@@ -65,7 +65,7 @@ public class ValueSetService {
     }
 
     /**
-     *  Updates the list of value sets.
+     * Updates the list of value sets.
      * @param valueSets list of actual value sets
      */
     @Transactional
@@ -88,8 +88,10 @@ public class ValueSetService {
     }
 
     /**
-     *  Saves a value set.
-     *
+     * Saves a value set.
+     * @param hash  The hash value of the value set data.
+     * @param valueSetName The name of the value set.
+     * @param valueSetData The raw value set data.
      */
     @Transactional
     public void saveValueSet(String hash, String valueSetName, String valueSetData) {

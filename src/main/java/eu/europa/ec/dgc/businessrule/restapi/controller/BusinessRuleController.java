@@ -257,6 +257,7 @@ public class BusinessRuleController {
     public ResponseEntity<String> createRule(
         @RequestHeader(value = "X_COUNTRY") String country,
         @RequestHeader(value = "X_ID") String id,
+        @RequestHeader(value = "X_VER") String version,
         @RequestBody String ruleData) {
 
         String hash;
@@ -274,7 +275,7 @@ public class BusinessRuleController {
             throw new DgcaBusinessRulesResponseException(HttpStatus.INTERNAL_SERVER_ERROR, "0x500",
                 "Internal Server Error","","");
         }
-        businessRuleService.saveBusinessRule(hash, id, country, ruleData);
+        businessRuleService.saveBusinessRule(hash, id, country, version, ruleData);
         return ResponseEntity.ok("Upload: OK");
 
     }

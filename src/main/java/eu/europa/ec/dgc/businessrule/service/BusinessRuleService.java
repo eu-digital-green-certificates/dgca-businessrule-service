@@ -27,9 +27,12 @@ import eu.europa.ec.dgc.businessrule.repository.BusinessRuleRepository;
 import eu.europa.ec.dgc.businessrule.restapi.dto.BusinessRuleListItemDto;
 import eu.europa.ec.dgc.businessrule.restapi.dto.ValueSetListItemDto;
 import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
+import eu.europa.ec.dgc.gateway.connector.model.ValidationRule;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +46,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class BusinessRuleService {
 
     private final BusinessRuleRepository businessRuleRepository;
+
+    private final BusinessRulesUtils businessRulesUtils;
 
     /**
      *  Gets list of all business rules ids and hashes.
@@ -91,10 +96,26 @@ public class BusinessRuleService {
 
         for (BusinessRuleItem rule : businessRules) {
             if (!alreadyStoredRules.contains(rule.getHash())) {
-                saveBusinessRule(rule.getHash(), rule.getIdentifier(),rule.getCountry(), rule.getRawData());
+                saveBusinessRule(rule);
             }
         }
 
+    }
+
+    /**
+     * Saves a Business rule.
+     * @param rule The rule to be saved.
+     */
+    @Transactional
+    public void saveBusinessRule(BusinessRuleItem rule) {
+        BusinessRuleEntity bre = new BusinessRuleEntity();
+        bre.setHash(rule.getHash());
+        bre.setIdentifier(rule.getIdentifier());
+        bre.setCountry(rule.getCountry().toUpperCase(Locale.ROOT));
+        bre.setVersion(rule.getVersion());
+        bre.setRawData(rule.getRawData());
+
+        businessRuleRepository.save(bre);
     }
 
     /**
@@ -102,16 +123,41 @@ public class BusinessRuleService {
      *
      */
     @Transactional
-    public void saveBusinessRule(String hash, String ruleId, String ruleCountry, String ruleData) {
+    public void saveBusinessRule(String hash, String ruleId, String ruleCountry, String version, String ruleData) {
         BusinessRuleEntity bre = new BusinessRuleEntity();
         bre.setHash(hash);
         bre.setIdentifier(ruleId);
         bre.setCountry(ruleCountry.toUpperCase(Locale.ROOT));
+        bre.setVersion(version);
         bre.setRawData(ruleData);
-        bre.setHash(hash);
 
         businessRuleRepository.save(bre);
     }
+
+    /**
+     * Creates a List of business rule items from a list of validation rules.
+     * @param validationRules the list containing the validation rules.
+     * @return List of BusinessRuleItems.
+     */
+    public List<BusinessRuleItem> createBusinessRuleItemList(List<ValidationRule> validationRules)
+        throws NoSuchAlgorithmException {
+        List<BusinessRuleItem> businessRuleItems = new ArrayList<>();
+
+        for (ValidationRule validationRule: validationRules) {
+            BusinessRuleItem businessRuleItem = new BusinessRuleItem();
+
+            businessRuleItem.setHash(businessRulesUtils.calculateHash(validationRule.getRawJson()));
+            businessRuleItem.setIdentifier(validationRule.getIdentifier());
+            businessRuleItem.setCountry(validationRule.getCountry());
+            businessRuleItem.setVersion(validationRule.getVersion());
+            businessRuleItem.setRawData(validationRule.getRawJson());
+
+            businessRuleItems.add(businessRuleItem);
+        }
+
+        return businessRuleItems;
+    }
+
 
     /**
      * Gets a list of hash values of all stored business rules.

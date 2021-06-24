@@ -51,7 +51,7 @@ public class BusinessRuleEntity {
     private String identifier;
 
     @Column(name = "version", nullable = false)
-    String version = "1.0.0";
+    String version;
 
     @Column(name = "country_code", nullable = false, length = 2)
     String country;
