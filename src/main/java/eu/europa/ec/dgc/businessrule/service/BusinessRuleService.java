@@ -116,22 +116,6 @@ public class BusinessRuleService {
     }
 
     /**
-     *  Saves a Business rule.
-     *
-     */
-    @Transactional
-    public void saveBusinessRule(String hash, String ruleId, String ruleCountry, String version, String ruleData) {
-        BusinessRuleEntity bre = new BusinessRuleEntity();
-        bre.setHash(hash);
-        bre.setIdentifier(ruleId);
-        bre.setCountry(ruleCountry.toUpperCase(Locale.ROOT));
-        bre.setVersion(version);
-        bre.setRawData(ruleData);
-
-        businessRuleRepository.save(bre);
-    }
-
-    /**
      * Creates a List of business rule items from a list of validation rules.
      * @param validationRules the list containing the validation rules.
      * @return List of BusinessRuleItems.

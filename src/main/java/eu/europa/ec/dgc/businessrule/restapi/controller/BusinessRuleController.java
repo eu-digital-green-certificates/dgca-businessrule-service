@@ -22,6 +22,7 @@ package eu.europa.ec.dgc.businessrule.restapi.controller;
 
 import eu.europa.ec.dgc.businessrule.entity.BusinessRuleEntity;
 import eu.europa.ec.dgc.businessrule.exception.DgcaBusinessRulesResponseException;
+import eu.europa.ec.dgc.businessrule.model.BusinessRuleItem;
 import eu.europa.ec.dgc.businessrule.restapi.dto.BusinessRuleListItemDto;
 import eu.europa.ec.dgc.businessrule.restapi.dto.ProblemReportDto;
 import eu.europa.ec.dgc.businessrule.service.BusinessRuleService;
@@ -265,7 +266,13 @@ public class BusinessRuleController {
             throw new DgcaBusinessRulesResponseException(HttpStatus.INTERNAL_SERVER_ERROR, "0x500",
                 "Internal Server Error","","");
         }
-        businessRuleService.saveBusinessRule(hash, id, country, version, ruleData);
+        BusinessRuleItem bri = new BusinessRuleItem();
+        bri.setHash(hash);
+        bri.setIdentifier(id);
+        bri. setCountry(country);
+        bri.setVersion(version);
+        bri.setRawData(ruleData);
+        businessRuleService.saveBusinessRule(bri);
         return ResponseEntity.ok("Upload: OK");
 
     }

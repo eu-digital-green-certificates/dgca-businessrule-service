@@ -74,6 +74,19 @@ class BusinessRuleServiceTest {
     }
 
     @Test
+    void updateBusinessRulesWithEmptyList() {
+        businessRulesTestHelper.insertBusinessRule(BusinessRulesTestHelper.BR_HASH_1,
+            BusinessRulesTestHelper.BR_IDENTIFIER_1, BusinessRulesTestHelper.BR_COUNTRY_1,
+            BusinessRulesTestHelper.BR_VERSION_1, BusinessRulesTestHelper.BR_DATA_1);
+
+        List<BusinessRuleItem> businessRuleItems = new ArrayList<>();
+
+        businessRuleService.updateBusinesRules(businessRuleItems);
+
+        Assertions.assertEquals(0, businessRuleRepository.count());
+    }
+
+    @Test
     void updateBusinessRule() throws Exception {
         businessRulesTestHelper.insertBusinessRule(BusinessRulesTestHelper.BR_HASH_1,
             BusinessRulesTestHelper.BR_IDENTIFIER_1, BusinessRulesTestHelper.BR_COUNTRY_1,

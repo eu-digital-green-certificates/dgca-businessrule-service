@@ -71,6 +71,18 @@ class ValueSetServiceTest {
     }
 
     @Test
+    void updateValueSetsWithEmptyList()  {
+        businessRulesTestHelper.insertValueSet(BusinessRulesTestHelper.VALUESET_HASH_1,
+            BusinessRulesTestHelper.VALUESET_IDENTIFIER_1, BusinessRulesTestHelper.VALUESET_DATA_1);
+
+        List<ValueSetItem> items = new ArrayList<>();
+
+        valueSetService.updateValueSets(items);
+
+        Assertions.assertEquals(0, valueSetRepository.count());
+    }
+
+    @Test
     void updateValueSets()  {
         businessRulesTestHelper.insertValueSet(BusinessRulesTestHelper.VALUESET_HASH_1,
             BusinessRulesTestHelper.VALUESET_IDENTIFIER_1, BusinessRulesTestHelper.VALUESET_DATA_1);
