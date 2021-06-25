@@ -1,6 +1,6 @@
 /*-
  * ---license-start
- * eu-digital-green-certificates / dgca-verifier-service
+ * eu-digital-green-certificates / dgca-businessrule-service
  * ---
  * Copyright (C) 2021 T-Systems International GmbH and all other contributors
  * ---
@@ -53,6 +53,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -61,6 +62,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 public class ValueSetController {
+
+    private static final String API_VERSION_HEADER = "X-VERSION";
 
     private final BusinessRulesUtils businessRulesUtils;
 
@@ -89,11 +92,6 @@ public class ValueSetController {
             @ApiResponse(
                 responseCode = "200",
                 description = "Returns a list of all value set ids and there hash values.",
-                headers = {
-                    @Header(
-                        name = "X-SIGNATURE",
-                        description = "ECDSA signature of the returned value, if configured.")
-                },
                 content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     array = @ArraySchema(schema = @Schema(implementation = ValueSetListItemDto.class)),
@@ -135,8 +133,9 @@ public class ValueSetController {
                     }))
         }
     )
-    public ResponseEntity<List<ValueSetListItemDto>> getValueSetList() {
-
+    public ResponseEntity<List<ValueSetListItemDto>> getValueSetList(
+        @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion
+    ) {
         return ResponseEntity.ok(valueSetService.getValueSetsList());
     }
 
@@ -194,6 +193,7 @@ public class ValueSetController {
                 ))
         })
     public ResponseEntity<String> getValueSet(
+        @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion,
         @Valid @PathVariable("hash") String hash
     ) {
         ValueSetEntity vse = valueSetService.getValueSetByHash(hash);
@@ -226,12 +226,21 @@ public class ValueSetController {
 
     private void loadValuesetFile(String filename, String valueSetName) {
         Resource resource = new ClassPathResource(filename);
+        String rawData;
+        String hash;
         try {
-            valueSetService.saveValueSet(valueSetName,
-                IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
+            rawData = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+            hash = businessRulesUtils.calculateHash(rawData);
+
+        } catch (NoSuchAlgorithmException e) {
+            log.error("Calculation of hash failed:", e);
+            return;
         } catch (IOException e) {
             log.error("Could not read file: " + valueSetName);
+            return;
         }
+
+        valueSetService.saveValueSet(hash, valueSetName, rawData);
     }
 
 }

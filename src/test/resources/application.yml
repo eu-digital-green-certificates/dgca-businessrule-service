@@ -5,15 +5,21 @@ spring:
     active:
       - test
   application:
-    name: dgca-verifier-service
+    name: dgca-businessrule-service
   liquibase:
     change-log: classpath:db/changelog.xml
   main:
     allow-bean-definition-overriding: true
 dgc:
-  synchroniseCertificates:
-    timeInterval: 60000
-    lockLimit: 1800000
+  businessRulesDownload:
+    timeInterval: 1800000
+    lockLimit: 3600000
+  valueSetsDownload:
+    timeInterval: 1800000
+    lockLimit: 3600000
+  countryListDownload:
+    timeInterval: 1800000
+    lockLimit: 3600000
   gateway:
     connector:
       enabled: false

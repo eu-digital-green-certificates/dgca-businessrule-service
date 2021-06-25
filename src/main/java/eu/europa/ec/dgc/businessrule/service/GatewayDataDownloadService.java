@@ -18,18 +18,23 @@
  * ---license-end
  */
 
-package eu.europa.ec.dgc.businessrule.repository;
+package eu.europa.ec.dgc.businessrule.service;
 
-import eu.europa.ec.dgc.businessrule.entity.ValueSetEntity;
-import eu.europa.ec.dgc.businessrule.restapi.dto.ValueSetListItemDto;
-import java.util.List;
-import org.springframework.data.jpa.repository.JpaRepository;
+public interface GatewayDataDownloadService {
 
-public interface ValueSetRepository extends JpaRepository<ValueSetEntity, String> {
+    /**
+     * Synchronises the business rules with the gateway.
+     */
+    void downloadBusinessRules();
 
-    List<ValueSetListItemDto> findAllByOrderByIdAsc();
+    /**
+     * Synchronises the value sets with the gateway.
+     */
+    void downloadValueSets();
 
-    ValueSetEntity findOneByHash(String hash);
+    /**
+     * Synchronises the country list with the gateway.
+     */
+    void downloadCountryList();
 
-    void deleteByHashNotIn(List<String> hashes);
 }
