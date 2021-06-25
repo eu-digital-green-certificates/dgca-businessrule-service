@@ -37,7 +37,8 @@ public class CountryListService {
     private final CountryListRepository countryListRepository;
 
     /**
-     * returns the country list.
+     * Gets the actual country list.
+     * @return the country list.
      */
     @Transactional
     public String getCountryList() {
@@ -64,7 +65,8 @@ public class CountryListService {
 
 
     /**
-     *  Saves a country list by replacing an old one.
+     * Saves a country list by replacing an old one.
+     * @param listData the country list to be saved.
      */
 
     @Transactional

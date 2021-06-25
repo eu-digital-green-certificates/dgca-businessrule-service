@@ -100,7 +100,7 @@ public class CountryListController {
      */
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Hidden
-    public ResponseEntity<String> createRule(
+    public ResponseEntity<String> createCountryList(
         @RequestBody String countryListData) {
         countryListService.saveCountryList(countryListData);
 

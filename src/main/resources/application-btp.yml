@@ -2,3 +2,9 @@ dgc:
   gateway:
     connector:
       enabled: false
+      tls-trust-store:
+        path: false
+      tls-key-store:
+        path: false
+      trust-anchor:
+         path: false

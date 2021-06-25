@@ -22,17 +22,14 @@ package eu.europa.ec.dgc.businessrule.service;
 
 import eu.europa.ec.dgc.businessrule.entity.BusinessRuleEntity;
 import eu.europa.ec.dgc.businessrule.model.BusinessRuleItem;
-import eu.europa.ec.dgc.businessrule.model.ValueSetItem;
 import eu.europa.ec.dgc.businessrule.repository.BusinessRuleRepository;
 import eu.europa.ec.dgc.businessrule.restapi.dto.BusinessRuleListItemDto;
-import eu.europa.ec.dgc.businessrule.restapi.dto.ValueSetListItemDto;
 import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
 import eu.europa.ec.dgc.gateway.connector.model.ValidationRule;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

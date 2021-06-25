@@ -77,7 +77,7 @@ public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadServic
             businessRuleService.updateBusinesRules(ruleItems);
         } else {
             log.warn("The download of the business rules seems to fail, as the download connector "
-                + "returns an empty list.-> No data was changed.");
+                + "returns an empty business rules list.-> No data was changed.");
         }
 
         log.info("Business rules finished");
@@ -102,7 +102,7 @@ public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadServic
             valueSetService.updateValueSets(valueSetItems);
         } else {
             log.warn("The download of the value sets seems to fail, as the download connector "
-                + "returns an empty list.-> No data was changed.");
+                + "returns an empty value sets list.-> No data was changed.");
         }
 
         log.info("Valuesets download finished");
@@ -122,7 +122,7 @@ public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadServic
             countryListService.updateCountryList(countryListJsonStr);
         } else {
             log.warn("The download of the country list seems to fail, as the download connector "
-                + "returns an empty list.-> No data was changed.");
+                + "returns an empty country list.-> No data was changed.");
         }
 
         log.info("Country list download finished");

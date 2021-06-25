@@ -1,7 +1,5 @@
 package eu.europa.ec.dgc.businessrule.model;
 
-import javax.persistence.Column;
-import javax.persistence.Lob;
 import lombok.Getter;
 import lombok.Setter;
 
