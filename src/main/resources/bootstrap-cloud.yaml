@@ -1,7 +1,7 @@
 ---
 spring:
   application:
-    name: cwa-dgca-verifier-service
+    name: cwa-dcc-rules
   cloud:
     vault:
       ssl:
@@ -14,7 +14,7 @@ spring:
         enabled: true
         backend: ${VAULT_BACKEND}
         profile-separator: '/'
-        application-name: 'cwa-businessrule-service'
+        application-name: 'cwa-dcc-rules'
         default-context: ''
         profiles: cloud
       fail-fast: true
