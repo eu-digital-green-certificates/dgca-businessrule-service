@@ -260,6 +260,11 @@
       <groupId>com.sap.hcp.cf.logging</groupId>
       <artifactId>cf-java-logging-support-logback</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.nimbusds</groupId>
+      <artifactId>nimbus-jose-jwt</artifactId>
+      <version>9.9.2</version>
+    </dependency>
   </dependencies>
 
   <build>

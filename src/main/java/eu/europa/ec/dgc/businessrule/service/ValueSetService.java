@@ -72,16 +72,24 @@ public class ValueSetService {
     public void updateValueSets(List<ValueSetItem> valueSets) {
         List<String> valueSetsHashes = valueSets.stream().map(ValueSetItem::getHash).collect(Collectors.toList());
         List<String> alreadyStoredValueSets = getValueSetsHashList();
+        log.debug("Got {} value sets from gateway and {} already stored in the database. Processing update now...",
+                valueSetsHashes.size(), alreadyStoredValueSets.size());
 
         if (valueSetsHashes.isEmpty()) {
+            log.info("Got no value sets from gateway. Deleting all stored value sets.");
             valueSetRepository.deleteAll();
         } else {
+            log.info("Deleting value sets not contained in latest response from gateway.");
             valueSetRepository.deleteByHashNotIn(valueSetsHashes);
         }
 
         for (ValueSetItem valueSet : valueSets) {
+            log.debug("Processing value set with hash '{}'.", valueSet.getHash());
             if (!alreadyStoredValueSets.contains(valueSet.getHash())) {
                 saveValueSet(valueSet.getHash(), valueSet.getId(), valueSet.getRawData());
+                log.debug("Saved value set '{}'.", valueSet.getHash());
+            } else {
+                log.debug("Value set already exists in database. Persisting skipped.");
             }
         }
 
