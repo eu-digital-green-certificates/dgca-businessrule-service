@@ -57,15 +57,6 @@ jobs:
     - name: docker push trusted
       run: |
         echo ${TRUSTED_TOKEN} | docker login ${TRUSTED_URL} -u ${TRUSTED_USER} --password-stdin
-        export DOCKER_CONTENT_TRUST=1
-        export DOCKER_CONTENT_TRUST_SERVER=${TRUSTED_SERVER_URL}
-        export DOCKER_CONTENT_TRUST_ROOT_PASSPHRASE=${TRUSTED_TOKEN}
-        export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE=${TRUSTED_TOKEN}
-        gpg --quiet --batch --yes --decrypt --passphrase=${TRUSTED_KEY} \
-        --output trusted.key trusted.key.gpg
-        chmod 600 trusted.key
-        docker trust key load trusted.key --name user
-        docker trust sign ${TRUSTED_URL}/${TRUSTED_REPOSITORY}/${ARTIFACT_ID}:${VERSION}
         docker push ${TRUSTED_URL}/${TRUSTED_REPOSITORY}/${ARTIFACT_ID}:${VERSION}
       env:
         TRUSTED_KEY: ${{ secrets.TRUSTED_KEY }}
