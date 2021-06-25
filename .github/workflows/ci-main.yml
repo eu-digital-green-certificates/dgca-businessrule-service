@@ -61,7 +61,7 @@ jobs:
     - name: docker push trusted
       run: |
         echo ${TRUSTED_TOKEN} | docker login ${TRUSTED_URL} -u ${TRUSTED_USER} --password-stdin
-        docker push ${TRUSTED_URL}/${TRUSTED_REPOSITORY}/${ARTIFACT_ID}:${APP_VERSION}
+        docker push ${TRUSTED_URL}/${TRUSTED_REPOSITORY}/cwa-dcc-rules:${APP_VERSION}
       env:
         TRUSTED_KEY: ${{ secrets.TRUSTED_KEY }}
         TRUSTED_URL: ${{ secrets.TRUSTED_URL }}
