@@ -138,9 +138,9 @@ public class BusinessRulesTestHelper {
         + "      \"system\": \"http://snomed.info/sct\"\n"
         + "    }}}";
 
-    public static final String VALUESET_HASH_1 = "aad9707271d4e8434134efa0c2875882c322474ef1b8c36637d3a2e90db9be4f";
+    public static final String VALUESET_HASH_1 = "7d8a9a79caa9ccc5373209d85eb91c3f6beec6762fa06ddacf0172ec819cd058";
 
-    public static final String VALUSSET_IDENTIFIER_1 = "sct-vaccines-covid-19";
+    public static final String VALUESET_IDENTIFIER_1 = "sct-vaccines-covid-19";
 
     public static final String VALUESET_DATA_2 = "{\n"
         + "  \"valueSetId\": \"vaccines-covid-19-names\",\n"
@@ -154,9 +154,9 @@ public class BusinessRulesTestHelper {
         + "      \"version\": \"\"\n"
         + "    }}}";
 
-    public static final String VALUESET_HASH_2 = "b17525ef919116adda2838aa09725fdfebd7300146247b06e79427d418adb238";
+    public static final String VALUESET_HASH_2 = "d2c03840b0e771b02967170bfc7b633702e0932b09f643a6edcd079df1ea096d";
 
-    public static final String VALUSSET_IDENTIFIER_2 = "vaccines-covid-19-names";
+    public static final String VALUESET_IDENTIFIER_2 = "vaccines-covid-19-names";
 
 
     private final ValueSetRepository valueSetRepository;

@@ -82,17 +82,17 @@ class ValueSetControllerIntegrationTest {
     @Test
     void getValueSetList() throws Exception {
 
-        String expectedJson = "[{\"id\":\""+BusinessRulesTestHelper.VALUSSET_IDENTIFIER_1+"\","
+        String expectedJson = "[{\"id\":\""+BusinessRulesTestHelper.VALUESET_IDENTIFIER_1 +"\","
             + "\"hash\":\""+BusinessRulesTestHelper.VALUESET_HASH_1+"\"},"
-            + "{\"id\":\""+BusinessRulesTestHelper.VALUSSET_IDENTIFIER_2+"\","
+            + "{\"id\":\""+BusinessRulesTestHelper.VALUESET_IDENTIFIER_2 +"\","
             + "\"hash\":\""+BusinessRulesTestHelper.VALUESET_HASH_2+"\"}]";
 
         businessRulesTestHelper.insertValueSet(BusinessRulesTestHelper.VALUESET_HASH_1,
-            BusinessRulesTestHelper.VALUSSET_IDENTIFIER_1,
+            BusinessRulesTestHelper.VALUESET_IDENTIFIER_1,
             BusinessRulesTestHelper.VALUESET_DATA_1);
 
         businessRulesTestHelper.insertValueSet(BusinessRulesTestHelper.VALUESET_HASH_2,
-            BusinessRulesTestHelper.VALUSSET_IDENTIFIER_2,
+            BusinessRulesTestHelper.VALUESET_IDENTIFIER_2,
             BusinessRulesTestHelper.VALUESET_DATA_2);
 
         mockMvc.perform(get("/valuesets").header(API_VERSION_HEADER, "1.0"))
@@ -105,11 +105,11 @@ class ValueSetControllerIntegrationTest {
     @Test
     void getValueSet() throws Exception {
         businessRulesTestHelper.insertValueSet(BusinessRulesTestHelper.VALUESET_HASH_1,
-            BusinessRulesTestHelper.VALUSSET_IDENTIFIER_1,
+            BusinessRulesTestHelper.VALUESET_IDENTIFIER_1,
             BusinessRulesTestHelper.VALUESET_DATA_1);
 
         businessRulesTestHelper.insertValueSet(BusinessRulesTestHelper.VALUESET_HASH_2,
-            BusinessRulesTestHelper.VALUSSET_IDENTIFIER_2,
+            BusinessRulesTestHelper.VALUESET_IDENTIFIER_2,
             BusinessRulesTestHelper.VALUESET_DATA_2);
 
         mockMvc.perform(get("/valuesets/" + BusinessRulesTestHelper.VALUESET_HASH_1)
@@ -140,7 +140,7 @@ class ValueSetControllerIntegrationTest {
             .andExpect(content().json(expectedJson));
 
         businessRulesTestHelper.insertValueSet(BusinessRulesTestHelper.VALUESET_HASH_2,
-            BusinessRulesTestHelper.VALUSSET_IDENTIFIER_2,
+            BusinessRulesTestHelper.VALUESET_IDENTIFIER_2,
             BusinessRulesTestHelper.VALUESET_DATA_2);
 
         mockMvc.perform(get("/valuesets/" + BusinessRulesTestHelper.VALUESET_HASH_2)
