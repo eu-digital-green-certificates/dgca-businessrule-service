@@ -1,11 +1,10 @@
 spring:
-  h2:
-    console:
-      enabled: false
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}
+    username: ${POSTGRESQL_USER}
+    password: ${POSTGRESQL_PASSWORD}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+springdoc:
+  api-docs:
+    enabled: false
