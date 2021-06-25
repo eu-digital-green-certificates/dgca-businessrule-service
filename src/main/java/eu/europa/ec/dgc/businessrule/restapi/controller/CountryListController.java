@@ -73,11 +73,6 @@ public class CountryListController {
             @ApiResponse(
                 responseCode = "200",
                 description = "Returns a JSON list, with all onboarded member states as country code.",
-                headers = {
-                    @Header(
-                        name = "X-SIGNATURE",
-                        description = "ECDSA signature of the returned value, if configured.")
-                },
                 content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     array = @ArraySchema(schema = @Schema(implementation = String.class)),

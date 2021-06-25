@@ -90,11 +90,6 @@ public class BusinessRuleController {
             @ApiResponse(
                 responseCode = "200",
                 description = "Returns a list of all business rule ids country codes and hash values.",
-                headers = {
-                    @Header(
-                        name = "X-SIGNATURE",
-                        description = "ECDSA signature of the returned value, if configured.")
-                },
                 content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     array = @ArraySchema(schema = @Schema(implementation = BusinessRuleListItemDto.class))))
@@ -131,11 +126,6 @@ public class BusinessRuleController {
             @ApiResponse(
                 responseCode = "200",
                 description = "Returns a list of all business rule ids country codes and hash values for a country.",
-                headers = {
-                    @Header(
-                        name = "X-SIGNATURE",
-                        description = "ECDSA signature of the returned value, if configured.")
-                },
                 content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     array = @ArraySchema(schema = @Schema(implementation = BusinessRuleListItemDto.class)))),

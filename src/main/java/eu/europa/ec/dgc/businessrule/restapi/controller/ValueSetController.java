@@ -92,11 +92,6 @@ public class ValueSetController {
             @ApiResponse(
                 responseCode = "200",
                 description = "Returns a list of all value set ids and there hash values.",
-                headers = {
-                    @Header(
-                        name = "X-SIGNATURE",
-                        description = "ECDSA signature of the returned value, if configured.")
-                },
                 content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     array = @ArraySchema(schema = @Schema(implementation = ValueSetListItemDto.class)),
