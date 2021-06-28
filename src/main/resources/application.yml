@@ -25,17 +25,34 @@ spring:
       pool:
         size: 5
 management:
+  server:
+    ssl:
+      enabled: false
+    port: 8081
   endpoint:
     info:
       enabled: true
     health:
       enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
   endpoints:
     enabled-by-default: false
     web:
-      base-path: /management
       exposure:
-        include: info,health
+        include: info,health,metrics,prometheus
+    jmx:
+      exposure:
+        include: info,health,metrics,prometheus
+  health:
+    probes:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
 info:
   name: ${spring.application.name}
   profiles: ${spring.profiles.active}
