@@ -1,6 +1,6 @@
 /*-
  * ---license-start
- * eu-digital-green-certificates / dgca-verifier-service
+ * eu-digital-green-certificates / dgca-businessrule-service
  * ---
  * Copyright (C) 2021 T-Systems International GmbH and all other contributors
  * ---
@@ -22,9 +22,11 @@ package eu.europa.ec.dgc.businessrule.restapi.controller;
 
 import eu.europa.ec.dgc.businessrule.entity.BusinessRuleEntity;
 import eu.europa.ec.dgc.businessrule.exception.DgcaBusinessRulesResponseException;
+import eu.europa.ec.dgc.businessrule.model.BusinessRuleItem;
 import eu.europa.ec.dgc.businessrule.restapi.dto.BusinessRuleListItemDto;
 import eu.europa.ec.dgc.businessrule.restapi.dto.ProblemReportDto;
 import eu.europa.ec.dgc.businessrule.service.BusinessRuleService;
+import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,6 +37,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Locale;
 import javax.validation.Valid;
@@ -58,9 +61,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BusinessRuleController {
 
-    private final BusinessRuleService businessRuleService;
+    private static final String API_VERSION_HEADER = "X-VERSION";
 
     private static final String X_SIGNATURE_HEADER = "X-SIGNATURE";
+
+    private final BusinessRuleService businessRuleService;
+
+    private final BusinessRulesUtils businessRulesUtils;
 
     /**
      * Http Method for getting the business rules list.
@@ -84,17 +91,14 @@ public class BusinessRuleController {
             @ApiResponse(
                 responseCode = "200",
                 description = "Returns a list of all business rule ids country codes and hash values.",
-                headers = {
-                    @Header(
-                        name = "X-SIGNATURE",
-                        description = "ECDSA signature of the returned value, if configured.")
-                },
                 content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     array = @ArraySchema(schema = @Schema(implementation = BusinessRuleListItemDto.class))))
         }
     )
-    public ResponseEntity<List<BusinessRuleListItemDto>> getRules() {
+    public ResponseEntity<List<BusinessRuleListItemDto>> getRules(
+        @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion
+    ) {
 
         return ResponseEntity.ok(businessRuleService.getBusinessRulesList());
     }
@@ -123,11 +127,6 @@ public class BusinessRuleController {
             @ApiResponse(
                 responseCode = "200",
                 description = "Returns a list of all business rule ids country codes and hash values for a country.",
-                headers = {
-                    @Header(
-                        name = "X-SIGNATURE",
-                        description = "ECDSA signature of the returned value, if configured.")
-                },
                 content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     array = @ArraySchema(schema = @Schema(implementation = BusinessRuleListItemDto.class)))),
@@ -140,6 +139,7 @@ public class BusinessRuleController {
         }
     )
     public ResponseEntity<List<BusinessRuleListItemDto>> getRulesForCountry(
+        @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion,
         @Valid @PathVariable("country") String country
     ) {
         validateCountryParameter(country);
@@ -220,7 +220,8 @@ public class BusinessRuleController {
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = ProblemReportDto.class)))
         })
-    public ResponseEntity<String> getRuleByHash(
+    public ResponseEntity<String> getRuleByCountryAndHash(
+        @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion,
         @Valid @PathVariable("country") String country,
         @Valid @PathVariable("hash") String hash
     ) {
@@ -247,15 +248,31 @@ public class BusinessRuleController {
     public ResponseEntity<String> createRule(
         @RequestHeader(value = "X_COUNTRY") String country,
         @RequestHeader(value = "X_ID") String id,
+        @RequestHeader(value = "X_VER") String version,
         @RequestBody String ruleData) {
 
+        String hash;
         validateCountryParameter(country);
 
         if (id == null || id.isBlank()) {
             throw new DgcaBusinessRulesResponseException(HttpStatus.BAD_REQUEST, "0x003", "Possible reasons: "
                 + "The id of the rule is not set.", id,"");
         }
-        businessRuleService.saveBusinessRule(id, country.toUpperCase(Locale.ROOT), ruleData);
+
+        try {
+            hash = businessRulesUtils.calculateHash(ruleData);
+        } catch (NoSuchAlgorithmException e) {
+            log.error("Calculation of hash failed:", e);
+            throw new DgcaBusinessRulesResponseException(HttpStatus.INTERNAL_SERVER_ERROR, "0x500",
+                "Internal Server Error","","");
+        }
+        BusinessRuleItem bri = new BusinessRuleItem();
+        bri.setHash(hash);
+        bri.setIdentifier(id);
+        bri. setCountry(country);
+        bri.setVersion(version);
+        bri.setRawData(ruleData);
+        businessRuleService.saveBusinessRule(bri);
         return ResponseEntity.ok("Upload: OK");
 
     }
