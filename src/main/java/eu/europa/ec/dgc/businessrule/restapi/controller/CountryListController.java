@@ -1,6 +1,6 @@
 /*-
  * ---license-start
- * eu-digital-green-certificates / dgca-verifier-service
+ * eu-digital-green-certificates / dgca-businessrule-service
  * ---
  * Copyright (C) 2021 T-Systems International GmbH and all other contributors
  * ---
@@ -38,6 +38,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,6 +48,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 public class CountryListController {
+
+    private static final String API_VERSION_HEADER = "X-VERSION";
 
     private final CountryListService countryListService;
 
@@ -70,11 +73,6 @@ public class CountryListController {
             @ApiResponse(
                 responseCode = "200",
                 description = "Returns a JSON list, with all onboarded member states as country code.",
-                headers = {
-                    @Header(
-                        name = "X-SIGNATURE",
-                        description = "ECDSA signature of the returned value, if configured.")
-                },
                 content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     array = @ArraySchema(schema = @Schema(implementation = String.class)),
@@ -86,7 +84,9 @@ public class CountryListController {
                     }))
         }
     )
-    public ResponseEntity<String> getCountryList() {
+    public ResponseEntity<String> getCountryList(
+        @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion
+    ) {
         return ResponseEntity.ok(countryListService.getCountryList());
     }
 
@@ -95,7 +95,7 @@ public class CountryListController {
      */
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Hidden
-    public ResponseEntity<String> createRule(
+    public ResponseEntity<String> createCountryList(
         @RequestBody String countryListData) {
         countryListService.saveCountryList(countryListData);
 
