@@ -3,7 +3,6 @@ package eu.europa.ec.dgc.businessrule.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.FieldNamingPolicy;
-import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -21,15 +20,13 @@ import eu.europa.ec.dgc.gateway.connector.dto.TrustListItemDto;
 import eu.europa.ec.dgc.gateway.connector.dto.ValidationRuleDto;
 import eu.europa.ec.dgc.gateway.connector.model.ValidationRule;
 import eu.europa.ec.dgc.signing.SignedStringMessageParser;
+import eu.europa.ec.dgc.utils.CertificateUtils;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +62,7 @@ public class GatewayDataDownloadBtpServiceImpl implements GatewayDataDownloadSer
     private final BusinessRuleService businessRuleService;
     private final ValueSetService valueSetService;
     private final CountryListService countryListService;
+    private final CertificateUtils certificateUtils;
 
     @Override
     @Scheduled(fixedDelayString = "${dgc.businessRulesDownload.timeInterval}")
@@ -267,12 +265,7 @@ public class GatewayDataDownloadBtpServiceImpl implements GatewayDataDownloadSer
     private String getCertThumbprint(X509CertificateHolder x509CertificateHolder) {
         try {
             byte[] data = x509CertificateHolder.getEncoded();
-            byte[] certHashBytes = MessageDigest.getInstance("SHA-256").digest(data);
-            String hexString = (new BigInteger(1, certHashBytes)).toString(16);
-            if (hexString.length() == 63) {
-                hexString = "0" + hexString;
-            }
-            return hexString;
+            return certificateUtils.calculateHash(data);
         } catch (NoSuchAlgorithmException | IOException e) {
             log.error("Could not calculate thumbprint of certificate '{}': {}.",
                     x509CertificateHolder.getSubject(), e.getMessage());
