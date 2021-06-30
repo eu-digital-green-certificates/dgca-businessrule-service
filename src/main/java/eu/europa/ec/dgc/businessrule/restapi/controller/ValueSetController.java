@@ -27,27 +27,18 @@ import eu.europa.ec.dgc.businessrule.restapi.dto.ProblemReportDto;
 import eu.europa.ec.dgc.businessrule.restapi.dto.ValueSetListItemDto;
 import eu.europa.ec.dgc.businessrule.service.ValueSetService;
 import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -192,6 +183,7 @@ public class ValueSetController {
                     schema = @Schema(implementation = ProblemReportDto.class)
                 ))
         })
+
     public ResponseEntity<String> getValueSet(
         @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion,
         @Valid @PathVariable("hash") String hash
@@ -206,41 +198,5 @@ public class ValueSetController {
         return ResponseEntity.ok(vse.getRawData());
     }
 
-    /**
-     * Http Method for loading sample value sets from resources .
-     */
-    @GetMapping(path = "/loaddummy", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Hidden
-    public ResponseEntity<String> loadDummyData() {
-        loadValuesetFile("/static/valuesets/country-2-codes.json", "country-2-codes");
-        loadValuesetFile("/static/valuesets/disease-agent-targeted.json", "disease-agent-targeted");
-        loadValuesetFile("/static/valuesets/test-manf.json", "covid-19-lab-test-manufacturer-and-name");
-        loadValuesetFile("/static/valuesets/test-result.json", "covid-19-lab-result");
-        loadValuesetFile("/static/valuesets/test-type.json", "covid-19-lab-test-type");
-        loadValuesetFile("/static/valuesets/vaccine-mah-manf.json", "vaccines-covid-19-auth-holders");
-        loadValuesetFile("/static/valuesets/vaccine-medicinal-product.json", "vaccines-covid-19-names");
-        loadValuesetFile("/static/valuesets/vaccine-prophylaxis.json", "sct-vaccines-covid-19");
-
-        return ResponseEntity.ok("Loaded");
-    }
-
-    private void loadValuesetFile(String filename, String valueSetName) {
-        Resource resource = new ClassPathResource(filename);
-        String rawData;
-        String hash;
-        try {
-            rawData = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-            hash = businessRulesUtils.calculateHash(rawData);
-
-        } catch (NoSuchAlgorithmException e) {
-            log.error("Calculation of hash failed:", e);
-            return;
-        } catch (IOException e) {
-            log.error("Could not read file: " + valueSetName);
-            return;
-        }
-
-        valueSetService.saveValueSet(hash, valueSetName, rawData);
-    }
 
 }
