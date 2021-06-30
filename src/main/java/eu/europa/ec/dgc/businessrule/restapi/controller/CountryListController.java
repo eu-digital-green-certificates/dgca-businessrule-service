@@ -21,11 +21,9 @@
 package eu.europa.ec.dgc.businessrule.restapi.controller;
 
 import eu.europa.ec.dgc.businessrule.service.CountryListService;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -36,8 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -90,16 +86,5 @@ public class CountryListController {
         return ResponseEntity.ok(countryListService.getCountryList());
     }
 
-    /**
-     * Http Method for uploading sample data.
-     */
-    @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Hidden
-    public ResponseEntity<String> createCountryList(
-        @RequestBody String countryListData) {
-        countryListService.saveCountryList(countryListData);
-
-        return ResponseEntity.ok("\"Upload\": \"Ok\"");
-    }
 
 }
