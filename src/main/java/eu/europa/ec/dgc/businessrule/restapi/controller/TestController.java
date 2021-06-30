@@ -26,15 +26,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Test API to upload or init data.
+ * It can be used if the gateway is not available
+ */
 @RestController
 @RequestMapping("/")
 @Slf4j
 @RequiredArgsConstructor
 @Profile("testapi")
-/**
- * Test API to upload or init data.
- * It can be used if the gateway is not available
- */
 public class TestController {
     private final BusinessRulesUtils businessRulesUtils;
     private final ValueSetService valueSetService;
@@ -81,7 +81,8 @@ public class TestController {
     /**
      * Http Method for uploading sample data.
      */
-    @PostMapping(path = "/countrylist", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/countrylist", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @Hidden
     public ResponseEntity<String> createCountryList(
             @RequestBody String countryListData) {
@@ -93,7 +94,8 @@ public class TestController {
     /**
      * Http Method for uploading sample data.
      */
-    @PostMapping(path = "/rules", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/rules", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @Hidden
     public ResponseEntity<String> createRule(
             @RequestHeader(value = "X_COUNTRY") String country,
