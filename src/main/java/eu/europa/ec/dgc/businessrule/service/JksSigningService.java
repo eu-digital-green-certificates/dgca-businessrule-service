@@ -41,8 +41,9 @@ public class JksSigningService implements SigningService {
     @PostConstruct
     public void loadKeyStore() throws KeyStoreException, IOException,
             CertificateException, NoSuchAlgorithmException, UnrecoverableEntryException {
-        if (jksSigningConfig ==null || jksSigningConfig.getKeyStorePassword()==null) {
-            throw new IllegalArgumentException("missing configuration jwk-signing.keyStorePassword; can not init jks signing");
+        if (jksSigningConfig == null || jksSigningConfig.getKeyStorePassword() == null) {
+            throw new IllegalArgumentException("missing configuration jwk-signing.keyStorePassword; "
+                    + "can not init jks signing");
         }
         final char[] keyStorePassword = jksSigningConfig.getKeyStorePassword().toCharArray();
         final String keyName = jksSigningConfig.getCertAlias();
@@ -80,7 +81,7 @@ public class JksSigningService implements SigningService {
             sig.update(hash.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(sig.sign());
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
-            throw new IllegalArgumentException("can not compute signature",e);
+            throw new IllegalArgumentException("can not compute signature", e);
         }
     }
 }

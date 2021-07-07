@@ -24,6 +24,12 @@ public class ListSigningService {
     private final Optional<SigningService> signingService;
     private final BusinessRulesUtils businessRulesUtils;
 
+    /**
+     * update or create signed list.
+     * @param list list of elements
+     * @param listType type of list
+     * @param <T> type of list elem
+     */
     public <T> void updateSignedList(List<T> list,ListType listType)  {
         try {
             String listRaw = jacksonHttpMessageConverter.getObjectMapper().writeValueAsString(list);

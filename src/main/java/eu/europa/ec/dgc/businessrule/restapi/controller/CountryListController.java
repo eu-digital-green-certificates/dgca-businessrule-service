@@ -87,7 +87,7 @@ public class CountryListController {
     ) {
         CountryListEntity countryList = countryListService.getCountryList();
         ResponseEntity<String> responseEntity;
-        if (countryList.getSignature()!=null) {
+        if (countryList.getSignature() != null) {
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.set(BusinessRuleController.X_SIGNATURE_HEADER, countryList.getSignature());
             responseEntity = ResponseEntity.ok().headers(responseHeaders).body(countryList.getRawData());

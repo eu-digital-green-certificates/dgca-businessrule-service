@@ -98,7 +98,7 @@ public class BusinessRuleController {
         if (rulesList.isPresent()) {
             ResponseEntity.BodyBuilder respBuilder = ResponseEntity.ok();
             String signature = rulesList.get().getSignature();
-            if (signature!=null & signature.length()>0) {
+            if (signature != null & signature.length() > 0) {
                 HttpHeaders responseHeaders = new HttpHeaders();
                 responseHeaders.set(X_SIGNATURE_HEADER, signature);
                 respBuilder.headers(responseHeaders);

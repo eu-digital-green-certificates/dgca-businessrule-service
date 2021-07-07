@@ -82,7 +82,7 @@ public class CountryListService {
             new IllegalArgumentException(e);
         }
         if (signingService.isPresent()) {
-             cle.setSignature(signingService.get().computeSignature(cle.getHash()));
+            cle.setSignature(signingService.get().computeSignature(cle.getHash()));
         }
         countryListRepository.save(cle);
     }
