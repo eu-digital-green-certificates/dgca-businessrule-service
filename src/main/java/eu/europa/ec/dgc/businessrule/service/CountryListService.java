@@ -79,7 +79,7 @@ public class CountryListService {
         try {
             cle.setHash(businessRulesUtils.calculateHash(listData));
         } catch (NoSuchAlgorithmException e) {
-            new IllegalArgumentException(e);
+            throw new IllegalArgumentException(e);
         }
         if (signingService.isPresent()) {
             cle.setSignature(signingService.get().computeSignature(cle.getHash()));
