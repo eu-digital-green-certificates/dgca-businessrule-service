@@ -20,8 +20,11 @@
 
 package eu.europa.ec.dgc.businessrule.service;
 
+import eu.europa.ec.dgc.businessrule.entity.ListType;
+import eu.europa.ec.dgc.businessrule.entity.SignedListEntity;
 import eu.europa.ec.dgc.businessrule.entity.ValueSetEntity;
 import eu.europa.ec.dgc.businessrule.model.ValueSetItem;
+import eu.europa.ec.dgc.businessrule.repository.SignedListRepository;
 import eu.europa.ec.dgc.businessrule.repository.ValueSetRepository;
 import eu.europa.ec.dgc.businessrule.restapi.dto.ValueSetListItemDto;
 import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
@@ -29,6 +32,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +47,8 @@ public class ValueSetService {
     private final BusinessRulesUtils businessRulesUtils;
 
     private final ValueSetRepository valueSetRepository;
-
+    private final ListSigningService listSigningService;
+    private final SignedListRepository signedListRepository;
 
     /**
      *  Gets list of all value set ids and hashes.
@@ -52,6 +57,10 @@ public class ValueSetService {
 
         List<ValueSetListItemDto> valueSetItems = valueSetRepository.findAllByOrderByIdAsc();
         return valueSetItems;
+    }
+
+    public Optional<SignedListEntity> getValueSetsSignedList() {
+        return signedListRepository.findById(ListType.ValueSets);
     }
 
 
@@ -92,6 +101,7 @@ public class ValueSetService {
                 log.debug("Value set already exists in database. Persisting skipped.");
             }
         }
+        listSigningService.updateSignedList(getValueSetsList(), ListType.ValueSets);
 
     }
 

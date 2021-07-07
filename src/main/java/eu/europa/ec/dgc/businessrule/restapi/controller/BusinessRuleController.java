@@ -21,6 +21,7 @@
 package eu.europa.ec.dgc.businessrule.restapi.controller;
 
 import eu.europa.ec.dgc.businessrule.entity.BusinessRuleEntity;
+import eu.europa.ec.dgc.businessrule.entity.SignedListEntity;
 import eu.europa.ec.dgc.businessrule.exception.DgcaBusinessRulesResponseException;
 import eu.europa.ec.dgc.businessrule.restapi.dto.BusinessRuleListItemDto;
 import eu.europa.ec.dgc.businessrule.restapi.dto.ProblemReportDto;
@@ -35,9 +36,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -56,7 +59,7 @@ public class BusinessRuleController {
 
     private static final String API_VERSION_HEADER = "X-VERSION";
 
-    private static final String X_SIGNATURE_HEADER = "X-SIGNATURE";
+    public static final String X_SIGNATURE_HEADER = "X-SIGNATURE";
 
     private final BusinessRuleService businessRuleService;
 
@@ -90,8 +93,21 @@ public class BusinessRuleController {
     public ResponseEntity<List<BusinessRuleListItemDto>> getRules(
         @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion
     ) {
-
-        return ResponseEntity.ok(businessRuleService.getBusinessRulesList());
+        Optional<SignedListEntity> rulesList = businessRuleService.getBusinessRulesSignedList();
+        ResponseEntity responseEntity;
+        if (rulesList.isPresent()) {
+            ResponseEntity.BodyBuilder respBuilder = ResponseEntity.ok();
+            String signature = rulesList.get().getSignature();
+            if (signature!=null & signature.length()>0) {
+                HttpHeaders responseHeaders = new HttpHeaders();
+                responseHeaders.set(X_SIGNATURE_HEADER, signature);
+                respBuilder.headers(responseHeaders);
+            }
+            responseEntity = respBuilder.body(rulesList.get().getRawData());
+        } else {
+            responseEntity = ResponseEntity.ok(businessRuleService.getBusinessRulesList());
+        }
+        return responseEntity;
     }
 
 

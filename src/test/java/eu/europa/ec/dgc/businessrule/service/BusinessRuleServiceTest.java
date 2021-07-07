@@ -1,8 +1,11 @@
 package eu.europa.ec.dgc.businessrule.service;
 
 import eu.europa.ec.dgc.businessrule.entity.BusinessRuleEntity;
+import eu.europa.ec.dgc.businessrule.entity.ListType;
+import eu.europa.ec.dgc.businessrule.entity.SignedListEntity;
 import eu.europa.ec.dgc.businessrule.model.BusinessRuleItem;
 import eu.europa.ec.dgc.businessrule.repository.BusinessRuleRepository;
+import eu.europa.ec.dgc.businessrule.repository.SignedListRepository;
 import eu.europa.ec.dgc.businessrule.testdata.BusinessRulesTestHelper;
 import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
 import eu.europa.ec.dgc.gateway.connector.DgcGatewayCountryListDownloadConnector;
@@ -11,6 +14,7 @@ import eu.europa.ec.dgc.gateway.connector.DgcGatewayValueSetDownloadConnector;
 import eu.europa.ec.dgc.gateway.connector.model.ValidationRule;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,11 +22,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("jks-signing")
 class BusinessRuleServiceTest {
 
     @MockBean
@@ -36,6 +44,9 @@ class BusinessRuleServiceTest {
 
     @Autowired
     BusinessRuleService businessRuleService;
+
+    @Autowired
+    SignedListRepository signedListRepository;
 
     @Autowired
     BusinessRuleRepository businessRuleRepository;
@@ -68,7 +79,7 @@ class BusinessRuleServiceTest {
         businessRuleItem.setRawData(BusinessRulesTestHelper.BR_DATA_1);
         businessRuleItems.add(businessRuleItem);
 
-        businessRuleService.updateBusinesRules(businessRuleItems);
+        businessRuleService.updateBusinessRules(businessRuleItems);
 
         Assertions.assertEquals(1, businessRuleRepository.count());
     }
@@ -81,7 +92,7 @@ class BusinessRuleServiceTest {
 
         List<BusinessRuleItem> businessRuleItems = new ArrayList<>();
 
-        businessRuleService.updateBusinesRules(businessRuleItems);
+        businessRuleService.updateBusinessRules(businessRuleItems);
 
         Assertions.assertEquals(0, businessRuleRepository.count());
     }
@@ -112,13 +123,13 @@ class BusinessRuleServiceTest {
         Item2.setRawData(BusinessRulesTestHelper.BR_DATA_2);
         businessRuleItems.add(Item2);
 
-        businessRuleService.updateBusinesRules(businessRuleItems);
+        businessRuleService.updateBusinessRules(businessRuleItems);
 
         Assertions.assertEquals(2, businessRuleRepository.count());
 
         businessRuleItems.remove(0);
 
-        businessRuleService.updateBusinesRules(businessRuleItems);
+        businessRuleService.updateBusinessRules(businessRuleItems);
 
         List<BusinessRuleEntity> result = businessRuleRepository.findAll();
         Assertions.assertEquals(1, result.size());
@@ -130,6 +141,10 @@ class BusinessRuleServiceTest {
         Assertions.assertEquals(BusinessRulesTestHelper.BR_COUNTRY_2, resultEntity.getCountry());
         Assertions.assertEquals(BusinessRulesTestHelper.BR_VERSION_2, resultEntity.getVersion());
         Assertions.assertEquals(BusinessRulesTestHelper.BR_DATA_2, resultEntity.getRawData());
+
+        Optional<SignedListEntity> rules = signedListRepository.findById(ListType.Rules);
+        assertTrue(rules.isPresent());
+        assertNotNull(rules.get().getSignature());
     }
 
 

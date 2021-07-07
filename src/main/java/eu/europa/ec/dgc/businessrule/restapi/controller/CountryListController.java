@@ -20,6 +20,7 @@
 
 package eu.europa.ec.dgc.businessrule.restapi.controller;
 
+import eu.europa.ec.dgc.businessrule.entity.CountryListEntity;
 import eu.europa.ec.dgc.businessrule.service.CountryListService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,6 +32,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -83,7 +85,16 @@ public class CountryListController {
     public ResponseEntity<String> getCountryList(
         @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion
     ) {
-        return ResponseEntity.ok(countryListService.getCountryList());
+        CountryListEntity countryList = countryListService.getCountryList();
+        ResponseEntity<String> responseEntity;
+        if (countryList.getSignature()!=null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.set(BusinessRuleController.X_SIGNATURE_HEADER, countryList.getSignature());
+            responseEntity = ResponseEntity.ok().headers(responseHeaders).body(countryList.getRawData());
+        } else {
+            responseEntity = ResponseEntity.ok(countryList.getRawData());
+        }
+        return responseEntity;
     }
 
 
