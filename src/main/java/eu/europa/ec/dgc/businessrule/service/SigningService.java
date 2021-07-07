@@ -8,4 +8,10 @@ public interface SigningService {
      * @return ans1 base64 coded signature
      */
     String computeSignature(String hash);
+
+    /**
+     * get signing public key .
+     * @return base64 der encoded key
+     */
+    String getPublicKey();
 }

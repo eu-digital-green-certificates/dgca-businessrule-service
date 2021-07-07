@@ -84,4 +84,9 @@ public class JksSigningService implements SigningService {
             throw new IllegalArgumentException("can not compute signature", e);
         }
     }
+
+    @Override
+    public String getPublicKey() {
+        return Base64.getEncoder().encodeToString(cert.getPublicKey().getEncoded());
+    }
 }
