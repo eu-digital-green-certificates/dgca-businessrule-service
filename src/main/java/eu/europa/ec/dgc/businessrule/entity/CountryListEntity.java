@@ -49,4 +49,9 @@ public class CountryListEntity {
     @Column(name = "raw_data", nullable = false)
     String rawData;
 
+    @Column(name = "hash", length = 64)
+    private String hash;
+
+    @Column(name = "signature", length = 256)
+    private String signature;
 }
