@@ -10,6 +10,7 @@ springdoc:
   api-docs:
     enabled: false
 dgc:
+  corsUrl: ${DGC_CORS_ENABLED_URL}
   gateway:
     connector:
       enabled: true
