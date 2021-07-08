@@ -11,6 +11,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
 dgc:
+  corsUrl: "localhost"
   businessRulesDownload:
     timeInterval: 1800000
     lockLimit: 3600000
