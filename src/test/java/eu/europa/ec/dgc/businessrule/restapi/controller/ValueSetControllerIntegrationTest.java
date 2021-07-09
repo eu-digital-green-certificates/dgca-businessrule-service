@@ -20,7 +20,14 @@
 
 package eu.europa.ec.dgc.businessrule.restapi.controller;
 
+import eu.europa.ec.dgc.businessrule.entity.ListType;
+import eu.europa.ec.dgc.businessrule.entity.SignedListEntity;
+import eu.europa.ec.dgc.businessrule.repository.SignedListRepository;
 import eu.europa.ec.dgc.businessrule.repository.ValueSetRepository;
+import eu.europa.ec.dgc.businessrule.service.BusinessRuleService;
+import eu.europa.ec.dgc.businessrule.service.ListSigningService;
+import eu.europa.ec.dgc.businessrule.service.SigningService;
+import eu.europa.ec.dgc.businessrule.service.ValueSetService;
 import eu.europa.ec.dgc.businessrule.testdata.BusinessRulesTestHelper;
 import eu.europa.ec.dgc.gateway.connector.DgcGatewayCountryListDownloadConnector;
 import eu.europa.ec.dgc.gateway.connector.DgcGatewayValidationRuleDownloadConnector;
@@ -62,11 +69,19 @@ class ValueSetControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ListSigningService listSigningService;
 
+    @Autowired
+    private ValueSetService valueSetService;
+
+    @Autowired
+    private SignedListRepository signedListRepository;
 
     @BeforeEach
     void clearRepositoryData()  {
         valueSetRepository.deleteAll();
+        signedListRepository.deleteAll();
     }
 
     @Test
@@ -94,6 +109,8 @@ class ValueSetControllerIntegrationTest {
         businessRulesTestHelper.insertValueSet(BusinessRulesTestHelper.VALUESET_HASH_2,
             BusinessRulesTestHelper.VALUESET_IDENTIFIER_2,
             BusinessRulesTestHelper.VALUESET_DATA_2);
+
+        listSigningService.updateSignedList(valueSetService.getValueSetsList(), ListType.ValueSets);
 
         mockMvc.perform(get("/valuesets").header(API_VERSION_HEADER, "1.0"))
             .andExpect(status().isOk())

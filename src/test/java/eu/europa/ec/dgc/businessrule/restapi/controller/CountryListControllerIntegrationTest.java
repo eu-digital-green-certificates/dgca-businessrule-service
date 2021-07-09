@@ -79,7 +79,7 @@ class CountryListControllerIntegrationTest {
     @Test
     void getCountryList() throws Exception {
 
-        CountryListEntity cle = new CountryListEntity(COUNTRY_LIST_ID, TEST_LIST_DATA);
+        CountryListEntity cle = new CountryListEntity(COUNTRY_LIST_ID, TEST_LIST_DATA,null,null);
         countryListRepository.save(cle);
 
         mockMvc.perform(get("/countrylist"))

@@ -21,6 +21,7 @@
 package eu.europa.ec.dgc.businessrule.restapi.controller;
 
 
+import eu.europa.ec.dgc.businessrule.entity.SignedListEntity;
 import eu.europa.ec.dgc.businessrule.entity.ValueSetEntity;
 import eu.europa.ec.dgc.businessrule.exception.DgcaBusinessRulesResponseException;
 import eu.europa.ec.dgc.businessrule.restapi.dto.ProblemReportDto;
@@ -36,9 +37,11 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.List;
+import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -127,7 +130,21 @@ public class ValueSetController {
     public ResponseEntity<List<ValueSetListItemDto>> getValueSetList(
         @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion
     ) {
-        return ResponseEntity.ok(valueSetService.getValueSetsList());
+        Optional<SignedListEntity> rulesList = valueSetService.getValueSetsSignedList();
+        ResponseEntity responseEntity;
+        if (rulesList.isPresent()) {
+            ResponseEntity.BodyBuilder respBuilder = ResponseEntity.ok();
+            String signature = rulesList.get().getSignature();
+            if (signature != null & signature.length() > 0) {
+                HttpHeaders responseHeaders = new HttpHeaders();
+                responseHeaders.set(BusinessRuleController.X_SIGNATURE_HEADER, signature);
+                respBuilder.headers(responseHeaders);
+            }
+            responseEntity = respBuilder.body(rulesList.get().getRawData());
+        } else {
+            responseEntity = ResponseEntity.ok(valueSetService.getValueSetsList());
+        }
+        return responseEntity;
     }
 
     /**

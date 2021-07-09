@@ -21,7 +21,11 @@
 package eu.europa.ec.dgc.businessrule.service;
 
 import eu.europa.ec.dgc.businessrule.entity.CountryListEntity;
+import eu.europa.ec.dgc.businessrule.entity.ListType;
 import eu.europa.ec.dgc.businessrule.repository.CountryListRepository;
+import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
+import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -35,19 +39,20 @@ public class CountryListService {
     private static final Long COUNTRY_LIST_ID = 1L;
 
     private final CountryListRepository countryListRepository;
+    private final Optional<SigningService> signingService;
+    private final BusinessRulesUtils businessRulesUtils;
 
     /**
      * Gets the actual country list.
      * @return the country list.
      */
     @Transactional
-    public String getCountryList() {
+    public CountryListEntity getCountryList() {
         CountryListEntity  cle = countryListRepository.getFirstById(COUNTRY_LIST_ID);
-        if (cle != null) {
-            return cle.getRawData();
-        } else {
-            return "[]";
+        if (cle == null) {
+            cle =  new CountryListEntity(COUNTRY_LIST_ID,"[]",null,null);
         }
+        return cle;
     }
 
 
@@ -57,8 +62,8 @@ public class CountryListService {
      */
     @Transactional
     public void updateCountryList(String newCountryListData) {
-        String oldList = getCountryList();
-        if (!newCountryListData.equals(oldList)) {
+        CountryListEntity oldList = getCountryList();
+        if (!newCountryListData.equals(oldList.getRawData())) {
             saveCountryList(newCountryListData);
         }
     }
@@ -68,10 +73,17 @@ public class CountryListService {
      * Saves a country list by replacing an old one.
      * @param listData the country list to be saved.
      */
-
     @Transactional
     public void saveCountryList(String listData) {
-        CountryListEntity cle = new CountryListEntity(COUNTRY_LIST_ID,listData);
+        CountryListEntity cle = new CountryListEntity(COUNTRY_LIST_ID,listData,null,null);
+        try {
+            cle.setHash(businessRulesUtils.calculateHash(listData));
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalArgumentException(e);
+        }
+        if (signingService.isPresent()) {
+            cle.setSignature(signingService.get().computeSignature(cle.getHash()));
+        }
         countryListRepository.save(cle);
     }
 

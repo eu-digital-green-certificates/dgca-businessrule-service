@@ -84,7 +84,7 @@ public class GatewayDataDownloadBtpServiceImpl implements GatewayDataDownloadSer
             }
 
             if (!ruleItems.isEmpty()) {
-                businessRuleService.updateBusinesRules(ruleItems);
+                businessRuleService.updateBusinessRules(ruleItems);
             } else {
                 log.warn("The download of the business rules seems to fail, as the download connector "
                         + "returns an empty list. No data will be changed.");

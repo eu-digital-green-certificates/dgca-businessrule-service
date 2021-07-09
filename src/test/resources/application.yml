@@ -30,3 +30,9 @@ springdoc:
   swagger-ui:
     path: /swagger
 
+jks-signing:
+  keyStoreFile: certs/signing.jks
+  keyStorePassword: dgca
+  certAlias: dgca
+  privateKeyPassword: dgca
+

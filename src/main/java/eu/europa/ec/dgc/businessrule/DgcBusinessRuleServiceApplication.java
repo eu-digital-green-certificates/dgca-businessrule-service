@@ -21,6 +21,7 @@
 package eu.europa.ec.dgc.businessrule;
 
 import eu.europa.ec.dgc.businessrule.config.DgcConfigProperties;
+import eu.europa.ec.dgc.businessrule.config.JksSigningConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,7 +31,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  * The Application class.
  */
 @SpringBootApplication
-@EnableConfigurationProperties(DgcConfigProperties.class)
+@EnableConfigurationProperties({DgcConfigProperties.class, JksSigningConfig.class})
 public class DgcBusinessRuleServiceApplication extends SpringBootServletInitializer {
 
     /**
