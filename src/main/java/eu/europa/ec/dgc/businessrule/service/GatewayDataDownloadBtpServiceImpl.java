@@ -43,6 +43,7 @@ import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.util.EntityUtils;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.slf4j.MDC;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -50,6 +51,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
+@ConditionalOnProperty("dgc.gateway.connector.enabled")
 @Profile("btp")
 public class GatewayDataDownloadBtpServiceImpl implements GatewayDataDownloadService {
 
