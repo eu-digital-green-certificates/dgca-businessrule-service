@@ -17,7 +17,7 @@ import org.springframework.vault.support.VaultTransitKey;
 public class VaultTransitSigningService implements SigningService {
     private final VaultTemplate vaultTemplate;
 
-    @Value( "${dgc.signKey:businessrule}" )
+    @Value("${dgc.signKey:businessrule}")
     private String signKey;
 
     @Override
@@ -35,11 +35,11 @@ public class VaultTransitSigningService implements SigningService {
         VaultTransitKey publicKey = vaultTemplate.opsForTransit().getKey(signKey);
         String key = Integer.toString(publicKey.getLatestVersion());
         Map<String,String> keyValues = (Map<String, String>) publicKey.getKeys().get(key);
-        String public_key = keyValues.get("public_key");
+        String publicKeyStr = keyValues.get("public_key");
         // Remove -----BEGIN PUBLIC KEY----- and -----END PUBLIC KEY-----
-        public_key = public_key.replaceAll("-----[A-Z ]+-----","");
+        publicKeyStr = publicKeyStr.replaceAll("-----[A-Z ]+-----","");
         // Remove new lines too
-        public_key = public_key.replaceAll("\\R","");
-        return public_key;
+        publicKeyStr = publicKeyStr.replaceAll("\\R","");
+        return publicKeyStr;
     }
 }
