@@ -63,7 +63,7 @@ springdoc:
   swagger-ui:
     path: /swagger
 dgc:
-  corsUrl: https://dgc-gateway.example.com
+  allowedCorsUrls: https://dgc-gateway.example.com
   businessRulesDownload:
     timeInterval: 1800000
     lockLimit: 3600000
