@@ -17,6 +17,7 @@
  * limitations under the License.
  * ---license-end
  */
+
 package eu.europa.ec.dgc.businessrule.config;
 
 import lombok.Getter;
