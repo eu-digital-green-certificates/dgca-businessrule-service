@@ -17,7 +17,6 @@
  * limitations under the License.
  * ---license-end
  */
-
 package eu.europa.ec.dgc.businessrule.config;
 
 import lombok.Getter;
@@ -35,7 +34,7 @@ public class DgcConfigProperties {
 
     private final GatewayDownload countryListDownload = new GatewayDownload();
 
-    private String corsUrl;
+    private String allowedCorsUrls;
 
     @Getter
     @Setter
@@ -46,3 +45,4 @@ public class DgcConfigProperties {
 
 
 }
+
