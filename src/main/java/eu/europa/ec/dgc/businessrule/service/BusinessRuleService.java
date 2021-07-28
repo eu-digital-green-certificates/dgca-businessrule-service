@@ -53,6 +53,7 @@ public class BusinessRuleService {
 
     private final BusinessRuleRepository businessRuleRepository;
     private final ListSigningService listSigningService;
+    private final Optional<SigningService> signingService;
     private final SignedListRepository signedListRepository;
 
     private final BusinessRulesUtils businessRulesUtils;
@@ -126,6 +127,10 @@ public class BusinessRuleService {
         bre.setCountry(rule.getCountry().toUpperCase(Locale.ROOT));
         bre.setVersion(rule.getVersion());
         bre.setRawData(rule.getRawData());
+
+        if (signingService.isPresent()) {
+            bre.setSignature(signingService.get().computeSignature(bre.getHash()));
+        }
 
         businessRuleRepository.save(bre);
     }
