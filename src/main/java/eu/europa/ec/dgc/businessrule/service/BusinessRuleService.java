@@ -20,18 +20,15 @@
 
 package eu.europa.ec.dgc.businessrule.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.europa.ec.dgc.businessrule.entity.BusinessRuleEntity;
 import eu.europa.ec.dgc.businessrule.entity.ListType;
 import eu.europa.ec.dgc.businessrule.entity.SignedListEntity;
-import eu.europa.ec.dgc.businessrule.exception.DgcaBusinessRulesResponseException;
 import eu.europa.ec.dgc.businessrule.model.BusinessRuleItem;
 import eu.europa.ec.dgc.businessrule.repository.BusinessRuleRepository;
 import eu.europa.ec.dgc.businessrule.repository.SignedListRepository;
 import eu.europa.ec.dgc.businessrule.restapi.dto.BusinessRuleListItemDto;
 import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
 import eu.europa.ec.dgc.gateway.connector.model.ValidationRule;
-import eu.europa.ec.dgc.utils.CertificateUtils;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +37,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
