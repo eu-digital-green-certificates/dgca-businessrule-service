@@ -45,6 +45,7 @@ public class ListSigningService {
             } else {
                 if (!ruleList.get().getHash().equals(hash)) {
                     ruleList.get().setHash(hash);
+                    ruleList.get().setRawData(listRaw);
                     calculateSignature(ruleList.get());
                     signedListRepository.save(ruleList.get());
                 }
