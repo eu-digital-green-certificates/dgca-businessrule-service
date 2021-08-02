@@ -21,7 +21,6 @@
 package eu.europa.ec.dgc.businessrule.service;
 
 import eu.europa.ec.dgc.businessrule.entity.CountryListEntity;
-import eu.europa.ec.dgc.businessrule.entity.ListType;
 import eu.europa.ec.dgc.businessrule.repository.CountryListRepository;
 import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
 import java.security.NoSuchAlgorithmException;
