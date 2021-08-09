@@ -7,4 +7,5 @@
     <include file="db/changelog/init_tables.xml"/>
     <include file="db/changelog/add_list_table.xml"/>
     <include file="db/changelog/add_rule_signature_column.xml"/>
+    <include file="db/changelog/add_valueset_signature_column.xml"/>
 </databaseChangeLog>

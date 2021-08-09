@@ -50,4 +50,7 @@ public class ValueSetEntity {
     @Lob
     @Column(name = "raw_data", nullable = false)
     String rawData;
+
+    @Column(name = "signature", length = 256)
+    private String signature;
 }
