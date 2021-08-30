@@ -40,6 +40,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -56,6 +57,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 public class BusinessRuleController {
+
+    @Value("${dgc.domestic-mode.enabled:false}")
+    private boolean domesticModeEnabled;
 
     private static final String API_VERSION_HEADER = "X-VERSION";
 
@@ -149,7 +153,9 @@ public class BusinessRuleController {
         @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion,
         @Valid @PathVariable("country") String country
     ) {
-        validateCountryParameter(country);
+        if (!domesticModeEnabled) {
+            validateCountryParameter(country);
+        }
 
         return ResponseEntity.ok(businessRuleService.getBusinessRulesListForCountry(country.toUpperCase(Locale.ROOT)));
     }
@@ -234,7 +240,10 @@ public class BusinessRuleController {
     ) {
         ResponseEntity<String> responseEntity;
 
-        validateCountryParameter(country);
+        if (!domesticModeEnabled) {
+            validateCountryParameter(country);
+        }
+
         if (hash == null || hash.isBlank()) {
             throw new DgcaBusinessRulesResponseException(HttpStatus.BAD_REQUEST, "0x005", "Possible reasons: "
                 + "The provided hash value is not correct", hash,"");

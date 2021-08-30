@@ -1,0 +1,8 @@
+dgc:
+  domestic-mode:
+    enabled: true
+    key-store: "domestic_rules"
+    base-path: "/"
+  gateway:
+    connector:
+      enabled: false

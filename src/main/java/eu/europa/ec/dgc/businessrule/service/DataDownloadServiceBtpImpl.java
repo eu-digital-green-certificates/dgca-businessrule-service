@@ -51,7 +51,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 @Profile("btp")
-public class GatewayDataDownloadBtpServiceImpl implements GatewayDataDownloadService {
+public class DataDownloadServiceBtpImpl implements DataDownloadService {
 
     private static final String DGCG_DESTINATION = "dgcg-destination";
     private static final String DCCG_UPLOAD_CERTS_ENDPOINT = "/trustList/UPLOAD";
@@ -68,7 +68,7 @@ public class GatewayDataDownloadBtpServiceImpl implements GatewayDataDownloadSer
     @Scheduled(fixedDelayString = "${dgc.businessRulesDownload.timeInterval}")
     @SchedulerLock(name = "GatewayDataDownloadService_downloadBusinessRules", lockAtLeastFor = "PT0S",
             lockAtMostFor = "${dgc.businessRulesDownload.lockLimit}")
-    public void downloadBusinessRules() {
+    public void downloadRules() {
         try {
             initializeLogging();
             log.debug("Business rules download started.");

@@ -31,6 +31,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import net.minidev.json.JSONArray;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -42,8 +44,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
+@ConditionalOnExpression("${dgc.gateway.connector.enabled} == true && ${dgc.domestic-mode.enabled:false} == false")
 @Profile("!btp")
-public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadService {
+public class DataDownloadServiceGatewayImpl implements DataDownloadService {
 
     private final DgcGatewayValidationRuleDownloadConnector dgcRuleConnector;
 
@@ -61,7 +64,7 @@ public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadServic
     @Scheduled(fixedDelayString = "${dgc.businessRulesDownload.timeInterval}")
     @SchedulerLock(name = "GatewayDataDownloadService_downloadBusinessRules", lockAtLeastFor = "PT0S",
         lockAtMostFor = "${dgc.businessRulesDownload.lockLimit}")
-    public void downloadBusinessRules() {
+    public void downloadRules() {
         List<BusinessRuleItem> ruleItems;
 
         log.info("Business rules download started");
