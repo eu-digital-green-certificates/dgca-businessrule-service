@@ -95,7 +95,7 @@ public class DomesticRuleDownloadService {
                 ruleItem = getRuleFromVaultData(kv, ruleKey);
                 ruleItems.add(ruleItem);
             } catch (NoSuchAlgorithmException e) {
-                log.error("Failed to hash business rules on download.", e);
+                log.error("Failed to hash domestic rules on download.", e);
                 return;
             } catch (DomesticRuleParseException e) {
                 log.error("Failed to parse rule with rule key: " + ruleKey);
@@ -105,8 +105,8 @@ public class DomesticRuleDownloadService {
         if (!ruleItems.isEmpty()) {
             domesticRuleService.updateBusinessRules(ruleItems);
         } else {
-            log.warn("The download of the business rules seems to fail, as the download connector "
-                + "returns an empty business rules list.-> No data was changed.");
+            log.warn("The download of the domestic rules seems to fail, as the download connector "
+                + "returns an empty rules list.-> No data was changed.");
         }
 
 
