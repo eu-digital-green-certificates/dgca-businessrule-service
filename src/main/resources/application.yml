@@ -73,7 +73,7 @@ dgc:
     timeInterval: 1800000
     lockLimit: 3600000
   domesticRulesDownload:
-    timeInterval: 60000
+    timeInterval: 1800000
     lockLimit: 3600000
   allowedCorsUrls: ${DGC_CORS_ENABLED_URL}
   gateway:
