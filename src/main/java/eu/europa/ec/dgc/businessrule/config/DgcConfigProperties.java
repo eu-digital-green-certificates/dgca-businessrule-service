@@ -29,17 +29,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("dgc")
 public class DgcConfigProperties {
 
-    private final GatewayDownload businessRulesDownload = new GatewayDownload();
+    private final DownloadSetting businessRulesDownload = new DownloadSetting();
 
-    private final GatewayDownload valueSetsDownload = new GatewayDownload();
+    private final DownloadSetting valueSetsDownload = new DownloadSetting();
 
-    private final GatewayDownload countryListDownload = new GatewayDownload();
+    private final DownloadSetting countryListDownload = new DownloadSetting();
+
+    private final DownloadSetting domesticRulesDownload = new DownloadSetting();
 
     private String allowedCorsUrls;
 
     @Getter
     @Setter
-    public static class GatewayDownload {
+    public static class DownloadSetting {
         private Integer timeInterval;
         private Integer lockLimit;
     }

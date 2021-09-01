@@ -45,7 +45,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/countrylist")
 @Slf4j
-@ConditionalOnExpression("${dgc.domestic-mode.enabled:false} == false")
 @RequiredArgsConstructor
 public class CountryListController {
 

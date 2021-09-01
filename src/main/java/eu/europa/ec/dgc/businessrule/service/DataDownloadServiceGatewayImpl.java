@@ -44,7 +44,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-@ConditionalOnExpression("${dgc.gateway.connector.enabled} == true && ${dgc.domestic-mode.enabled:false} == false")
+@ConditionalOnExpression("${dgc.gateway.connector.enabled} == true")
 @Profile("!btp")
 public class DataDownloadServiceGatewayImpl implements DataDownloadService {
 

@@ -33,7 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
-@ConditionalOnExpression("${dgc.domestic-mode.enabled:false} == false")
 @RequiredArgsConstructor
 public class CountryListService {
 

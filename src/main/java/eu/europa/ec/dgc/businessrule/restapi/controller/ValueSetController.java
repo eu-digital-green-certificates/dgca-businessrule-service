@@ -55,7 +55,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/valuesets")
 @Slf4j
-@ConditionalOnExpression("${dgc.domestic-mode.enabled:false} == false")
 @RequiredArgsConstructor
 public class ValueSetController {
 

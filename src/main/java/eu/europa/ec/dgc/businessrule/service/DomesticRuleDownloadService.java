@@ -47,7 +47,7 @@ import org.springframework.vault.core.VaultTemplate;
 @RequiredArgsConstructor
 @Component
 @ConditionalOnProperty("dgc.domestic-mode.enabled")
-public class DataDownloadServiceDomesticImpl implements DataDownloadService {
+public class DomesticRuleDownloadService {
 
     private final String identifierKeyName = "identifier";
     private final String regionKeyName = "region";
@@ -67,15 +67,14 @@ public class DataDownloadServiceDomesticImpl implements DataDownloadService {
 
     private final VaultTemplate vaultTemplate;
     private final BusinessRulesUtils businessRulesUtils;
-    private final BusinessRuleService businessRuleService;
+    private final DomesticRuleService domesticRuleService;
 
     /**
-     * A service to download the valuesets, business rules and country list from the digital covid certificate gateway.
+     * A service to download the domestic rules from a vault key value store.
      */
-    @Override
-    @Scheduled(fixedDelayString = "${dgc.businessRulesDownload.timeInterval}")
+    @Scheduled(fixedDelayString = "${dgc.domesticRulesDownload.timeInterval}")
     @SchedulerLock(name = "DomesticRulesDownloadService_downloadDomesticRules", lockAtLeastFor = "PT0S",
-        lockAtMostFor = "${dgc.businessRulesDownload.lockLimit}")
+        lockAtMostFor = "${dgc.domesticRulesDownload.lockLimit}")
     public void downloadRules() {
 
         List<BusinessRuleItem> ruleItems = new ArrayList<>();
@@ -104,7 +103,7 @@ public class DataDownloadServiceDomesticImpl implements DataDownloadService {
         }
 
         if (!ruleItems.isEmpty()) {
-            businessRuleService.updateBusinessRules(ruleItems);
+            domesticRuleService.updateBusinessRules(ruleItems);
         } else {
             log.warn("The download of the business rules seems to fail, as the download connector "
                 + "returns an empty business rules list.-> No data was changed.");
@@ -135,20 +134,6 @@ public class DataDownloadServiceDomesticImpl implements DataDownloadService {
 
         return ruleItem;
     }
-
-    @Override
-    public void downloadValueSets() {
-        // Not implemented in domestic mode
-    }
-
-    ;
-
-    @Override
-    public void downloadCountryList() {
-        // Not implemented in domestic mode
-    }
-
-    ;
 
 }
 

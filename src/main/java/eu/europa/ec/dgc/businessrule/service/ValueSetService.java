@@ -42,7 +42,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
-@ConditionalOnExpression("${dgc.domestic-mode.enabled:false} == false")
 @Service
 public class ValueSetService {
 
