@@ -23,7 +23,7 @@ package eu.europa.ec.dgc.businessrule.restapi.controller;
 import eu.europa.ec.dgc.businessrule.entity.SignedListEntity;
 import eu.europa.ec.dgc.businessrule.exception.DgcaBusinessRulesResponseException;
 import eu.europa.ec.dgc.businessrule.model.DomesticRuleItem;
-import eu.europa.ec.dgc.businessrule.restapi.dto.BusinessRuleListItemDto;
+import eu.europa.ec.dgc.businessrule.restapi.dto.DomesticRuleListItemDto;
 import eu.europa.ec.dgc.businessrule.restapi.dto.ProblemReportDto;
 import eu.europa.ec.dgc.businessrule.service.DomesticRuleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -88,10 +88,10 @@ public class DomesticRuleController {
                 description = "Returns a list of all rule ids and hash values.",
                 content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    array = @ArraySchema(schema = @Schema(implementation = BusinessRuleListItemDto.class))))
+                    array = @ArraySchema(schema = @Schema(implementation = DomesticRuleListItemDto.class))))
         }
     )
-    public ResponseEntity<List<BusinessRuleListItemDto>> getRules(
+    public ResponseEntity<List<DomesticRuleListItemDto>> getRules(
         @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion
     ) {
         Optional<SignedListEntity> rulesList = domesticRuleService.getRulesSignedList();
@@ -120,7 +120,7 @@ public class DomesticRuleController {
         summary = "Gets a specific rule by its  hash value.",
         description = "This method can be used to download a specific rule. Therefore the hash value "
             + "of the rule must be provided as path parameter.",
-        tags = {"Booster Notification"},
+        tags = {"Booster Notification Rules"},
         parameters = {
             @Parameter(
                 in = ParameterIn.PATH,
@@ -138,7 +138,7 @@ public class DomesticRuleController {
         responses = {
             @ApiResponse(
                 responseCode = "200",
-                description = "Returns the specified business rule.",
+                description = "Returns the specified rule.",
                 content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = String.class),
