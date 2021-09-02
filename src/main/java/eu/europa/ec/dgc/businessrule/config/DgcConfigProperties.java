@@ -35,6 +35,8 @@ public class DgcConfigProperties {
 
     private final GatewayDownload countryListDownload = new GatewayDownload();
 
+    private String allowedCorsUrls;
+
     @Getter
     @Setter
     public static class GatewayDownload {
@@ -44,3 +46,4 @@ public class DgcConfigProperties {
 
 
 }
+

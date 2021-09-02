@@ -21,13 +21,10 @@
 package eu.europa.ec.dgc.businessrule.utils;
 
 import eu.europa.ec.dgc.utils.CertificateUtils;
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.util.encoders.Hex;
 import org.springframework.stereotype.Service;
 
 @Slf4j

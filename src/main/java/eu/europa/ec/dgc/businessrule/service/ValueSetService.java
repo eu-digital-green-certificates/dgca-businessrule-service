@@ -49,6 +49,7 @@ public class ValueSetService {
     private final ValueSetRepository valueSetRepository;
     private final ListSigningService listSigningService;
     private final SignedListRepository signedListRepository;
+    private final Optional<SigningService> signingService;
 
     /**
      *  Gets list of all value set ids and hashes.
@@ -118,6 +119,10 @@ public class ValueSetService {
         vse.setHash(hash);
         vse.setId(valueSetName);
         vse.setRawData(valueSetData);
+
+        if (signingService.isPresent()) {
+            vse.setSignature(signingService.get().computeSignature(vse.getHash()));
+        }
 
         valueSetRepository.save(vse);
     }

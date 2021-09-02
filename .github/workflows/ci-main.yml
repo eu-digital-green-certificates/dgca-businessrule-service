@@ -1,5 +1,6 @@
 name: ci-main
 on:
+  workflow_dispatch:
   push:
     branches:
     - main
@@ -48,9 +49,23 @@ jobs:
         --password-stdin
         docker build . \
         --file ./Dockerfile \
-        --tag "${APP_PACKAGES_URL}:${APP_VERSION}"
+        --tag "${APP_PACKAGES_URL}:${APP_VERSION}" \
+        --tag "${TRUSTED_URL}/${TRUSTED_REPOSITORY}/cwa-dcc-rules:${APP_VERSION}"
         docker push "${APP_PACKAGES_URL}:${APP_VERSION}"
       env:
         APP_PACKAGES_URL: docker.pkg.github.com/${{ github.repository }}/dgca-businessrule-service
         APP_PACKAGES_USERNAME: ${{ github.actor }}
         APP_PACKAGES_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        TRUSTED_URL: ${{ secrets.TRUSTED_URL }}
+        TRUSTED_REPOSITORY: ${{ secrets.TRUSTED_REPOSITORY }}
+    - name: docker push trusted
+      run: |
+        echo ${TRUSTED_TOKEN} | docker login ${TRUSTED_URL} -u ${TRUSTED_USER} --password-stdin
+        docker push ${TRUSTED_URL}/${TRUSTED_REPOSITORY}/cwa-dcc-rules:${APP_VERSION}
+      env:
+        TRUSTED_KEY: ${{ secrets.TRUSTED_KEY }}
+        TRUSTED_URL: ${{ secrets.TRUSTED_URL }}
+        TRUSTED_SERVER_URL: ${{ secrets.TRUSTED_SERVER_URL }}
+        TRUSTED_REPOSITORY: ${{ secrets.TRUSTED_REPOSITORY }}
+        TRUSTED_USER: ${{ secrets.TRUSTED_USER }}
+        TRUSTED_TOKEN: ${{ secrets.TRUSTED_TOKEN }}

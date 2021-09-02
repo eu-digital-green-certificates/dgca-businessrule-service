@@ -98,7 +98,7 @@ public class BusinessRuleController {
         if (rulesList.isPresent()) {
             ResponseEntity.BodyBuilder respBuilder = ResponseEntity.ok();
             String signature = rulesList.get().getSignature();
-            if (signature != null & signature.length() > 0) {
+            if (signature != null && signature.length() > 0) {
                 HttpHeaders responseHeaders = new HttpHeaders();
                 responseHeaders.set(X_SIGNATURE_HEADER, signature);
                 respBuilder.headers(responseHeaders);
@@ -232,6 +232,8 @@ public class BusinessRuleController {
         @Valid @PathVariable("country") String country,
         @Valid @PathVariable("hash") String hash
     ) {
+        ResponseEntity<String> responseEntity;
+
         validateCountryParameter(country);
         if (hash == null || hash.isBlank()) {
             throw new DgcaBusinessRulesResponseException(HttpStatus.BAD_REQUEST, "0x005", "Possible reasons: "
@@ -244,7 +246,16 @@ public class BusinessRuleController {
             throw new DgcaBusinessRulesResponseException(HttpStatus.NOT_FOUND, "0x006", "Possible reasons: "
                 + "The provided hash or country may not be correct.", "country: " + country + ", hash: " + hash,"");
         }
-        return ResponseEntity.ok(rule.getRawData());
+
+        if (rule.getSignature() != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.set(BusinessRuleController.X_SIGNATURE_HEADER, rule.getSignature());
+            responseEntity = ResponseEntity.ok().headers(responseHeaders).body(rule.getRawData());
+        } else {
+            responseEntity = ResponseEntity.ok(rule.getRawData());
+        }
+
+        return responseEntity;
     }
 
     private void validateCountryParameter(String country) throws DgcaBusinessRulesResponseException {

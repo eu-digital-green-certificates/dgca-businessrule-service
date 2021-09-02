@@ -205,6 +205,8 @@ public class ValueSetController {
         @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion,
         @Valid @PathVariable("hash") String hash
     ) {
+        ResponseEntity<String> responseEntity;
+
         ValueSetEntity vse = valueSetService.getValueSetByHash(hash);
 
         if (vse == null) {
@@ -212,7 +214,15 @@ public class ValueSetController {
                 + "The provided hash value is not correct", hash, "");
         }
 
-        return ResponseEntity.ok(vse.getRawData());
+        if (vse.getSignature() != null) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.set(BusinessRuleController.X_SIGNATURE_HEADER, vse.getSignature());
+            responseEntity = ResponseEntity.ok().headers(responseHeaders).body(vse.getRawData());
+        } else {
+            responseEntity = ResponseEntity.ok(vse.getRawData());
+        }
+
+        return responseEntity;
     }
 
 
