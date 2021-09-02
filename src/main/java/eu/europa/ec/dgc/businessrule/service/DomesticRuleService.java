@@ -24,13 +24,8 @@ import eu.europa.ec.dgc.businessrule.entity.BusinessRuleEntity;
 import eu.europa.ec.dgc.businessrule.entity.ListType;
 import eu.europa.ec.dgc.businessrule.entity.SignedListEntity;
 import eu.europa.ec.dgc.businessrule.model.BusinessRuleItem;
-import eu.europa.ec.dgc.businessrule.repository.BusinessRuleRepository;
 import eu.europa.ec.dgc.businessrule.repository.SignedListRepository;
 import eu.europa.ec.dgc.businessrule.restapi.dto.BusinessRuleListItemDto;
-import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
-import eu.europa.ec.dgc.gateway.connector.model.ValidationRule;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -48,56 +43,46 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class DomesticRuleService {
 
-    private Map<String,BusinessRuleEntity> domesticRuleMap = new HashMap<>();
+    private Map<String, BusinessRuleEntity> domesticRuleMap = new HashMap<>();
     private final ListSigningService listSigningService;
     private final Optional<SigningService> signingService;
     private final SignedListRepository signedListRepository;
 
-    private final BusinessRulesUtils businessRulesUtils;
-
     /**
-     *  Gets list of all rules ids and hashes.
+     * Gets list of all rules ids and hashes.
      */
     public List<BusinessRuleListItemDto> getBusinessRulesList() {
-
-        List<BusinessRuleListItemDto> rulesItems = domesticRuleMap.values().stream().map(bre -> {
-            BusinessRuleListItemDto listItem = new BusinessRuleListItemDto(
-                bre.getIdentifier(),
-                bre.getVersion(),
-                bre.getCountry(),
-                bre.getHash()
-            );
-            return listItem; }).collect(Collectors.toList());
-
-        return rulesItems;
+        return domesticRuleMap.values().stream().map(bre -> new BusinessRuleListItemDto(
+            bre.getIdentifier(),
+            bre.getVersion(),
+            bre.getCountry(),
+            bre.getHash()
+        )).collect(Collectors.toList());
     }
 
     public Optional<SignedListEntity> getBusinessRulesSignedList() {
         return signedListRepository.findById(ListType.DomesticRules);
     }
 
+    /**
+     * Gets a List of BusinessRules for a country.
+     */
     public List<BusinessRuleListItemDto> getBusinessRulesListForCountry(String country) {
-
-        List<BusinessRuleListItemDto> ruleItems = getBusinessRulesList();
-
-        return ruleItems.stream().filter(item ->
+        return getBusinessRulesList().stream().filter(item ->
             country.equalsIgnoreCase(item.getCountry())).collect(Collectors.toList());
-
     }
 
-
-
     /**
-     *  Gets  a rule by country and hash.
+     * Gets  a rule by country and hash.
      */
     @Transactional
     public BusinessRuleEntity getBusinessRuleByCountryAndHash(String country, String hash) {
-
-        return  domesticRuleMap.get(country + hash);
+        return domesticRuleMap.get(country + hash);
     }
 
     /**
      * Updates the list of rules.
+     *
      * @param businessRules list of actual value sets
      */
     @Transactional
@@ -108,11 +93,12 @@ public class DomesticRuleService {
             saveBusinessRule(rule);
         }
 
-        listSigningService.updateSignedList(getBusinessRulesList(),ListType.DomesticRules);
+        listSigningService.updateSignedList(getBusinessRulesList(), ListType.DomesticRules);
     }
 
     /**
      * Saves a rule.
+     *
      * @param rule The rule to be saved.
      */
     @Transactional
@@ -124,9 +110,7 @@ public class DomesticRuleService {
         bre.setVersion(rule.getVersion());
         bre.setRawData(rule.getRawData());
 
-        if (signingService.isPresent()) {
-            bre.setSignature(signingService.get().computeSignature(bre.getHash()));
-        }
+        signingService.ifPresent(service -> bre.setSignature(service.computeSignature(bre.getHash())));
         domesticRuleMap.put(bre.getCountry() + bre.getHash(), bre);
     }
 

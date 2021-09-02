@@ -40,7 +40,6 @@ import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -209,7 +208,7 @@ public class DomesticRuleController {
                             + "  }\n"
                             + "}")
                     })),
-           @ApiResponse(
+            @ApiResponse(
                 responseCode = "404",
                 description = "Business rule could not be found for the given hash and country code value.",
                 content = @Content(
@@ -225,14 +224,14 @@ public class DomesticRuleController {
 
         if (hash == null || hash.isBlank()) {
             throw new DgcaBusinessRulesResponseException(HttpStatus.BAD_REQUEST, "0x005", "Possible reasons: "
-                + "The provided hash value is not correct", hash,"");
+                + "The provided hash value is not correct", hash, "");
         }
         BusinessRuleEntity rule =
             domesticRuleService.getBusinessRuleByCountryAndHash(country.toUpperCase(Locale.ROOT), hash);
 
         if (rule == null) {
             throw new DgcaBusinessRulesResponseException(HttpStatus.NOT_FOUND, "0x006", "Possible reasons: "
-                + "The provided hash or country may not be correct.", "country: " + country + ", hash: " + hash,"");
+                + "The provided hash or country may not be correct.", "country: " + country + ", hash: " + hash, "");
         }
 
         if (rule.getSignature() != null) {
