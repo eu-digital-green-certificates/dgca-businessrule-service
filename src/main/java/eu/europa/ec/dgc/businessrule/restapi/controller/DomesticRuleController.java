@@ -94,7 +94,7 @@ public class DomesticRuleController {
     public ResponseEntity<List<BusinessRuleListItemDto>> getRules(
         @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion
     ) {
-        Optional<SignedListEntity> rulesList = domesticRuleService.getBusinessRulesSignedList();
+        Optional<SignedListEntity> rulesList = domesticRuleService.getRulesSignedList();
         ResponseEntity responseEntity;
         if (rulesList.isPresent()) {
             ResponseEntity.BodyBuilder respBuilder = ResponseEntity.ok();
@@ -106,7 +106,7 @@ public class DomesticRuleController {
             }
             responseEntity = respBuilder.body(rulesList.get().getRawData());
         } else {
-            responseEntity = ResponseEntity.ok(domesticRuleService.getBusinessRulesList());
+            responseEntity = ResponseEntity.ok(domesticRuleService.getRulesList());
         }
         return responseEntity;
     }
@@ -180,14 +180,14 @@ public class DomesticRuleController {
 
         if (hash == null || hash.isBlank()) {
             throw new DgcaBusinessRulesResponseException(HttpStatus.BAD_REQUEST, "0x005", "Possible reasons: "
-                + "The provided hash value is not correct", hash,"");
+                + "The provided hash value is not correct", hash, "");
         }
         DomesticRuleItem rule =
             domesticRuleService.getRuleByHash(hash);
 
         if (rule == null) {
             throw new DgcaBusinessRulesResponseException(HttpStatus.NOT_FOUND, "0x006", "Possible reasons: "
-                + "The provided hash may not be correct.", "hash: " + hash,"");
+                + "The provided hash may not be correct.", "hash: " + hash, "");
         }
 
         if (rule.getSignature() != null) {

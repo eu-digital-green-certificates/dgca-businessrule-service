@@ -101,7 +101,7 @@ public class DomesticRuleDownloadService {
         }
 
         if (!ruleItems.isEmpty()) {
-            domesticRuleService.updateBusinessRules(ruleItems);
+            domesticRuleService.updateRules(ruleItems);
         } else {
             log.warn("The download of the domestic rules seems to fail, as the download connector "
                 + "returns an empty rules list.-> No data was changed.");

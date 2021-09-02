@@ -41,67 +41,61 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class DomesticRuleService {
 
-    private Map<String,DomesticRuleItem> domesticRuleMap = new HashMap<>();
+    private Map<String, DomesticRuleItem> domesticRuleMap = new HashMap<>();
     private final ListSigningService listSigningService;
     private final Optional<SigningService> signingService;
     private final SignedListRepository signedListRepository;
 
 
     /**
-     *  Gets list of all rules ids and hashes.
+     * Gets list of all rules ids and hashes.
      */
-    public List<DomesticRuleListItemDto> getBusinessRulesList() {
+    public List<DomesticRuleListItemDto> getRulesList() {
 
-        List<DomesticRuleListItemDto> rulesItems = domesticRuleMap.values().stream().map(rule -> {
-            DomesticRuleListItemDto listItem = new DomesticRuleListItemDto(
+        return domesticRuleMap.values().stream().map(rule -> new DomesticRuleListItemDto(
                 rule.getIdentifier(),
                 rule.getVersion(),
                 rule.getHash()
-            );
-            return listItem; }).collect(Collectors.toList());
-
-        return rulesItems;
+            )).collect(Collectors.toList());
     }
 
-    public Optional<SignedListEntity> getBusinessRulesSignedList() {
+    public Optional<SignedListEntity> getRulesSignedList() {
         return signedListRepository.findById(ListType.DomesticRules);
     }
 
 
     /**
-     *  Gets  a rule by country and hash.
+     * Gets  a rule by hash.
      */
     @Transactional
     public DomesticRuleItem getRuleByHash(String hash) {
-
-        return  domesticRuleMap.get(hash);
+        return domesticRuleMap.get(hash);
     }
 
     /**
      * Updates the list of rules.
+     *
      * @param rules list of actual value sets
      */
     @Transactional
-    public void updateBusinessRules(List<DomesticRuleItem> rules) {
+    public void updateRules(List<DomesticRuleItem> rules) {
         domesticRuleMap.clear();
 
         for (DomesticRuleItem rule : rules) {
-            saveBusinessRule(rule);
+            saveRule(rule);
         }
 
-        listSigningService.updateSignedList(getBusinessRulesList(),ListType.DomesticRules);
+        listSigningService.updateSignedList(getRulesList(), ListType.DomesticRules);
     }
 
     /**
      * Saves a rule.
+     *
      * @param rule The rule to be saved.
      */
     @Transactional
-    public void saveBusinessRule(DomesticRuleItem rule) {
-
-        if (signingService.isPresent()) {
-            rule.setSignature(signingService.get().computeSignature(rule.getHash()));
-        }
+    public void saveRule(DomesticRuleItem rule) {
+        signingService.ifPresent(service -> rule.setSignature(service.computeSignature(rule.getHash())));
         domesticRuleMap.put(rule.getHash(), rule);
     }
 
