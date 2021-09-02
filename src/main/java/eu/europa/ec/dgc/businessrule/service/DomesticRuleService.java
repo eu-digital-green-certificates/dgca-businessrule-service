@@ -20,20 +20,13 @@
 
 package eu.europa.ec.dgc.businessrule.service;
 
-import eu.europa.ec.dgc.businessrule.entity.BusinessRuleEntity;
 import eu.europa.ec.dgc.businessrule.entity.ListType;
 import eu.europa.ec.dgc.businessrule.entity.SignedListEntity;
-import eu.europa.ec.dgc.businessrule.model.BusinessRuleItem;
-import eu.europa.ec.dgc.businessrule.repository.BusinessRuleRepository;
+import eu.europa.ec.dgc.businessrule.model.DomesticRuleItem;
 import eu.europa.ec.dgc.businessrule.repository.SignedListRepository;
-import eu.europa.ec.dgc.businessrule.restapi.dto.BusinessRuleListItemDto;
-import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
-import eu.europa.ec.dgc.gateway.connector.model.ValidationRule;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
+import eu.europa.ec.dgc.businessrule.restapi.dto.DomesticRuleListItemDto;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,24 +41,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class DomesticRuleService {
 
-    private Map<String,BusinessRuleEntity> domesticRuleMap = new HashMap<>();
+    private Map<String,DomesticRuleItem> domesticRuleMap = new HashMap<>();
     private final ListSigningService listSigningService;
     private final Optional<SigningService> signingService;
     private final SignedListRepository signedListRepository;
 
-    private final BusinessRulesUtils businessRulesUtils;
 
     /**
      *  Gets list of all rules ids and hashes.
      */
-    public List<BusinessRuleListItemDto> getBusinessRulesList() {
+    public List<DomesticRuleListItemDto> getBusinessRulesList() {
 
-        List<BusinessRuleListItemDto> rulesItems = domesticRuleMap.values().stream().map(bre -> {
-            BusinessRuleListItemDto listItem = new BusinessRuleListItemDto(
-                bre.getIdentifier(),
-                bre.getVersion(),
-                bre.getCountry(),
-                bre.getHash()
+        List<DomesticRuleListItemDto> rulesItems = domesticRuleMap.values().stream().map(rule -> {
+            DomesticRuleListItemDto listItem = new DomesticRuleListItemDto(
+                rule.getIdentifier(),
+                rule.getVersion(),
+                rule.getHash()
             );
             return listItem; }).collect(Collectors.toList());
 
@@ -76,35 +67,25 @@ public class DomesticRuleService {
         return signedListRepository.findById(ListType.DomesticRules);
     }
 
-    public List<BusinessRuleListItemDto> getBusinessRulesListForCountry(String country) {
-
-        List<BusinessRuleListItemDto> ruleItems = getBusinessRulesList();
-
-        return ruleItems.stream().filter(item ->
-            country.equalsIgnoreCase(item.getCountry())).collect(Collectors.toList());
-
-    }
-
-
 
     /**
      *  Gets  a rule by country and hash.
      */
     @Transactional
-    public BusinessRuleEntity getBusinessRuleByCountryAndHash(String country, String hash) {
+    public DomesticRuleItem getRuleByHash(String hash) {
 
-        return  domesticRuleMap.get(country + hash);
+        return  domesticRuleMap.get(hash);
     }
 
     /**
      * Updates the list of rules.
-     * @param businessRules list of actual value sets
+     * @param rules list of actual value sets
      */
     @Transactional
-    public void updateBusinessRules(List<BusinessRuleItem> businessRules) {
+    public void updateBusinessRules(List<DomesticRuleItem> rules) {
         domesticRuleMap.clear();
 
-        for (BusinessRuleItem rule : businessRules) {
+        for (DomesticRuleItem rule : rules) {
             saveBusinessRule(rule);
         }
 
@@ -116,18 +97,12 @@ public class DomesticRuleService {
      * @param rule The rule to be saved.
      */
     @Transactional
-    public void saveBusinessRule(BusinessRuleItem rule) {
-        BusinessRuleEntity bre = new BusinessRuleEntity();
-        bre.setHash(rule.getHash());
-        bre.setIdentifier(rule.getIdentifier());
-        bre.setCountry(rule.getCountry().toUpperCase(Locale.ROOT));
-        bre.setVersion(rule.getVersion());
-        bre.setRawData(rule.getRawData());
+    public void saveBusinessRule(DomesticRuleItem rule) {
 
         if (signingService.isPresent()) {
-            bre.setSignature(signingService.get().computeSignature(bre.getHash()));
+            rule.setSignature(signingService.get().computeSignature(rule.getHash()));
         }
-        domesticRuleMap.put(bre.getCountry() + bre.getHash(), bre);
+        domesticRuleMap.put(rule.getHash(), rule);
     }
 
 }

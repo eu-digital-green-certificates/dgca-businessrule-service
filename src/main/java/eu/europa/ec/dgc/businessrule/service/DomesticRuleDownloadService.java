@@ -21,7 +21,7 @@
 package eu.europa.ec.dgc.businessrule.service;
 
 import eu.europa.ec.dgc.businessrule.exception.DomesticRuleParseException;
-import eu.europa.ec.dgc.businessrule.model.BusinessRuleItem;
+import eu.europa.ec.dgc.businessrule.model.DomesticRuleItem;
 import eu.europa.ec.dgc.businessrule.utils.BusinessRulesUtils;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ import org.springframework.vault.core.VaultTemplate;
 
 
 /**
- * A service to download the valuesets, business rules and country list from the digital covid certificate gateway.
+ * A service to download the bnrules from the vault.
  */
 @Slf4j
 @RequiredArgsConstructor
@@ -50,12 +50,10 @@ import org.springframework.vault.core.VaultTemplate;
 public class DomesticRuleDownloadService {
 
     private final String identifierKeyName = "identifier";
-    private final String regionKeyName = "region";
     private final String versionKeyName = "version";
     private final String rawDataKeyName = "raw_data";
     private final List<String> expectedKeys = Arrays.asList(
         identifierKeyName,
-        regionKeyName,
         versionKeyName,
         rawDataKeyName);
 
@@ -77,7 +75,7 @@ public class DomesticRuleDownloadService {
         lockAtMostFor = "${dgc.domesticRulesDownload.lockLimit}")
     public void downloadRules() {
 
-        List<BusinessRuleItem> ruleItems = new ArrayList<>();
+        List<DomesticRuleItem> ruleItems = new ArrayList<>();
 
         log.info("Domestic rules download started");
 
@@ -89,7 +87,7 @@ public class DomesticRuleDownloadService {
 
 
         for (String ruleKey : ruleKeys) {
-            BusinessRuleItem ruleItem;
+            DomesticRuleItem ruleItem;
 
             try {
                 ruleItem = getRuleFromVaultData(kv, ruleKey);
@@ -113,9 +111,9 @@ public class DomesticRuleDownloadService {
         log.info("Domestic rules download finished");
     }
 
-    private BusinessRuleItem getRuleFromVaultData(VaultKeyValueOperations kv, String ruleKey)
+    private DomesticRuleItem getRuleFromVaultData(VaultKeyValueOperations kv, String ruleKey)
         throws NoSuchAlgorithmException, DomesticRuleParseException {
-        BusinessRuleItem ruleItem = new BusinessRuleItem();
+        DomesticRuleItem ruleItem = new DomesticRuleItem();
         Map<String, Object> ruleRawData = kv.get(ruleKey).getData();
 
         if (!ruleRawData.keySet().containsAll(expectedKeys)) {
@@ -127,7 +125,6 @@ public class DomesticRuleDownloadService {
         }
 
         ruleItem.setIdentifier(ruleRawData.get(identifierKeyName).toString());
-        ruleItem.setCountry(ruleRawData.get(regionKeyName).toString());
         ruleItem.setVersion(ruleRawData.get(versionKeyName).toString());
         ruleItem.setRawData(ruleRawData.get(rawDataKeyName).toString());
         ruleItem.setHash(businessRulesUtils.calculateHash(ruleItem.getRawData()));

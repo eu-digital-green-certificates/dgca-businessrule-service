@@ -20,9 +20,9 @@
 
 package eu.europa.ec.dgc.businessrule.restapi.controller;
 
-import eu.europa.ec.dgc.businessrule.entity.BusinessRuleEntity;
 import eu.europa.ec.dgc.businessrule.entity.SignedListEntity;
 import eu.europa.ec.dgc.businessrule.exception.DgcaBusinessRulesResponseException;
+import eu.europa.ec.dgc.businessrule.model.DomesticRuleItem;
 import eu.europa.ec.dgc.businessrule.restapi.dto.BusinessRuleListItemDto;
 import eu.europa.ec.dgc.businessrule.restapi.dto.ProblemReportDto;
 import eu.europa.ec.dgc.businessrule.service.DomesticRuleService;
@@ -35,12 +35,10 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -54,7 +52,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/domestic/rules")
+@RequestMapping("/bnrules")
 @Slf4j
 @ConditionalOnExpression("${dgc.domestic-mode.enabled:false} == true")
 @RequiredArgsConstructor
@@ -71,11 +69,11 @@ public class DomesticRuleController {
      */
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
-        summary = "Gets the a list of all domestic rule ids country codes and hash values.",
-        description = "This method returns a list containing the ids, country codes and hash values of all domestic "
-            + "rules. The hash value can be used to check, if a domestic rule has changed and needs to be updated. "
-            + "The hash value and country code can also be used to download a specific rule afterwards.",
-        tags = {"Domestic Rules"},
+        summary = "Gets the a list of all booster notification rule ids and hash values.",
+        description = "This method returns a list containing the ids and hash values of all booster notification "
+            + "rules. The hash value can be used to check, if a rule has changed and needs to be updated. "
+            + "The hash value can also be used to download a specific rule afterwards.",
+        tags = {"Booster Notification Rules"},
         parameters = {
             @Parameter(
                 in = ParameterIn.HEADER,
@@ -87,7 +85,7 @@ public class DomesticRuleController {
         responses = {
             @ApiResponse(
                 responseCode = "200",
-                description = "Returns a list of all rule ids country codes and hash values.",
+                description = "Returns a list of all rule ids and hash values.",
                 content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     array = @ArraySchema(schema = @Schema(implementation = BusinessRuleListItemDto.class))))
@@ -113,59 +111,17 @@ public class DomesticRuleController {
         return responseEntity;
     }
 
-    /**
-     * Http Method for getting the business rules list for a country.
-     */
-    @GetMapping(path = "/{country}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(
-        summary = "Gets the a list of all rule ids country codes and hash values for a country.",
-        description = "This method returns a list containing the ids, country codes and hash values of all "
-            + "rules for a country. The hash value can be used to check, if a business rule has changed and needs to "
-            + "be updated. The hash value and country code can also be used to download a specific "
-            + "rule afterwards.",
-        tags = {"Domestic Rules"},
-        parameters = {
-            @Parameter(
-                in = ParameterIn.HEADER,
-                name = "X-VERSION",
-                description = "Version of the API. In preparation of changes in the future. Set it to \"1.0\"",
-                required = true,
-                schema = @Schema(implementation = String.class))
-        },
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Returns a list of all rule ids country codes and hash values for a country.",
-                content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    array = @ArraySchema(schema = @Schema(implementation = BusinessRuleListItemDto.class)))),
-        }
-    )
-    public ResponseEntity<List<BusinessRuleListItemDto>> getRulesForCountry(
-        @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion,
-        @Valid @PathVariable("country") String country
-    ) {
-
-        return ResponseEntity.ok(domesticRuleService.getBusinessRulesListForCountry(country.toUpperCase(Locale.ROOT)));
-    }
-
 
     /**
      * Http Method for getting  specific rule set .
      */
-    @GetMapping(path = "/{country}/{hash}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{hash}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
-        summary = "Gets a specific rule by its country code and hash value.",
-        description = "This method can be used to download a specific rule. Therefore the hash value and the "
-            + "country code of the rule must be provided as path parameter.",
-        tags = {"Domestic Rules"},
+        summary = "Gets a specific rule by its  hash value.",
+        description = "This method can be used to download a specific rule. Therefore the hash value "
+            + "of the rule must be provided as path parameter.",
+        tags = {"Booster Notification"},
         parameters = {
-            @Parameter(
-                in = ParameterIn.PATH,
-                name = "country",
-                description = "Country code of the rule to download.",
-                required = true,
-                schema = @Schema(implementation = String.class)),
             @Parameter(
                 in = ParameterIn.PATH,
                 name = "hash",
@@ -209,16 +165,15 @@ public class DomesticRuleController {
                             + "  }\n"
                             + "}")
                     })),
-           @ApiResponse(
+            @ApiResponse(
                 responseCode = "404",
-                description = "Business rule could not be found for the given hash and country code value.",
+                description = "Rule could not be found for the given hash value.",
                 content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(implementation = ProblemReportDto.class)))
         })
-    public ResponseEntity<String> getRuleByCountryAndHash(
+    public ResponseEntity<String> getRuleByHash(
         @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion,
-        @Valid @PathVariable("country") String country,
         @Valid @PathVariable("hash") String hash
     ) {
         ResponseEntity<String> responseEntity;
@@ -227,12 +182,12 @@ public class DomesticRuleController {
             throw new DgcaBusinessRulesResponseException(HttpStatus.BAD_REQUEST, "0x005", "Possible reasons: "
                 + "The provided hash value is not correct", hash,"");
         }
-        BusinessRuleEntity rule =
-            domesticRuleService.getBusinessRuleByCountryAndHash(country.toUpperCase(Locale.ROOT), hash);
+        DomesticRuleItem rule =
+            domesticRuleService.getRuleByHash(hash);
 
         if (rule == null) {
             throw new DgcaBusinessRulesResponseException(HttpStatus.NOT_FOUND, "0x006", "Possible reasons: "
-                + "The provided hash or country may not be correct.", "country: " + country + ", hash: " + hash,"");
+                + "The provided hash may not be correct.", "hash: " + hash,"");
         }
 
         if (rule.getSignature() != null) {
