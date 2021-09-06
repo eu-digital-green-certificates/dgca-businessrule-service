@@ -58,9 +58,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BusinessRuleController {
 
-    @Value("${dgc.domestic-mode.enabled:false}")
-    private boolean domesticModeEnabled;
-
     private static final String API_VERSION_HEADER = "X-VERSION";
 
     public static final String X_SIGNATURE_HEADER = "X-SIGNATURE";
@@ -153,9 +150,8 @@ public class BusinessRuleController {
         @RequestHeader(value = API_VERSION_HEADER, required = false) String apiVersion,
         @Valid @PathVariable("country") String country
     ) {
-        if (!domesticModeEnabled) {
-            validateCountryParameter(country);
-        }
+
+        validateCountryParameter(country);
 
         return ResponseEntity.ok(businessRuleService.getBusinessRulesListForCountry(country.toUpperCase(Locale.ROOT)));
     }
@@ -240,9 +236,7 @@ public class BusinessRuleController {
     ) {
         ResponseEntity<String> responseEntity;
 
-        if (!domesticModeEnabled) {
-            validateCountryParameter(country);
-        }
+        validateCountryParameter(country);
 
         if (hash == null || hash.isBlank()) {
             throw new DgcaBusinessRulesResponseException(HttpStatus.BAD_REQUEST, "0x005", "Possible reasons: "
