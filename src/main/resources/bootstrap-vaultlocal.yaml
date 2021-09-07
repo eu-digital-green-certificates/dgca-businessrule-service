@@ -1,7 +1,0 @@
-spring:
-  cloud:
-    vault:
-      enabled: true
-      # use for local vault transit test (change the access token)
-      token: s.sTcrrarmm8dxCUxvSDGWgERb
-      scheme: http
