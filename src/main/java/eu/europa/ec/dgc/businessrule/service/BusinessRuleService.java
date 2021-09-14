@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,15 @@ public class BusinessRuleService {
     private final SignedListRepository signedListRepository;
 
     private final BusinessRulesUtils businessRulesUtils;
+
+    /**
+     * Creates the signature for the empty rules list after start up.
+     */
+    @PostConstruct
+    @Transactional
+    public void businessRuleServiceInit() {
+        listSigningService.updateSignedList(getBusinessRulesList(),ListType.Rules);
+    }
 
     /**
      *  Gets list of all business rules ids and hashes.

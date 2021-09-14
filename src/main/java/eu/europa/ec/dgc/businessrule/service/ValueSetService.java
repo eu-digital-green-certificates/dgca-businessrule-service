@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,15 @@ public class ValueSetService {
     private final ListSigningService listSigningService;
     private final SignedListRepository signedListRepository;
     private final Optional<SigningService> signingService;
+
+    /**
+     * Creates the signature for the empty value sets list after start up.
+     */
+    @PostConstruct
+    @Transactional
+    public void valueSetServiceInit() {
+        listSigningService.updateSignedList(getValueSetsList(), ListType.ValueSets);
+    }
 
     /**
      *  Gets list of all value set ids and hashes.

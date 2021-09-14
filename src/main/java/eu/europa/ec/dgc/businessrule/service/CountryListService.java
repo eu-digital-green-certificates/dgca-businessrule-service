@@ -49,7 +49,8 @@ public class CountryListService {
     public CountryListEntity getCountryList() {
         CountryListEntity  cle = countryListRepository.getFirstById(COUNTRY_LIST_ID);
         if (cle == null) {
-            cle =  new CountryListEntity(COUNTRY_LIST_ID,"[]",null,null);
+            cle =  createCountryListEntity("[]");
+            countryListRepository.save(cle);
         }
         return cle;
     }
@@ -63,17 +64,12 @@ public class CountryListService {
     public void updateCountryList(String newCountryListData) {
         CountryListEntity oldList = getCountryList();
         if (!newCountryListData.equals(oldList.getRawData())) {
-            saveCountryList(newCountryListData);
+            countryListRepository.save(createCountryListEntity(newCountryListData));
         }
     }
 
 
-    /**
-     * Saves a country list by replacing an old one.
-     * @param listData the country list to be saved.
-     */
-    @Transactional
-    public void saveCountryList(String listData) {
+    private CountryListEntity createCountryListEntity(String listData) {
         CountryListEntity cle = new CountryListEntity(COUNTRY_LIST_ID,listData,null,null);
         try {
             cle.setHash(businessRulesUtils.calculateHash(listData));
@@ -83,10 +79,7 @@ public class CountryListService {
         if (signingService.isPresent()) {
             cle.setSignature(signingService.get().computeSignature(cle.getHash()));
         }
-        countryListRepository.save(cle);
+        return cle;
     }
-
-
-
 
 }
