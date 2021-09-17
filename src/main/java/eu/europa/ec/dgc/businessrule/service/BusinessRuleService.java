@@ -38,6 +38,8 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,32 +69,37 @@ public class BusinessRuleService {
      *  Gets list of all business rules ids and hashes.
      *
      */
+    @Cacheable("business_rules")
     public List<BusinessRuleListItemDto> getBusinessRulesList() {
-
+        log.debug("Get Rules list executed.");
         List<BusinessRuleListItemDto> rulesItems = businessRuleRepository.findAllByOrderByIdentifierAsc();
         return rulesItems;
     }
 
+    @Cacheable("business_rules")
     public Optional<SignedListEntity> getBusinessRulesSignedList() {
+        log.debug("Get Rules list executed.");
         return signedListRepository.findById(ListType.Rules);
     }
 
     /**
      *  Gets list of all business rules ids and hashes for a country.
      */
+    @Cacheable("business_rules")
     public List<BusinessRuleListItemDto> getBusinessRulesListForCountry(String country) {
-
+        log.debug("Get Rules list for country ({}) executed.", country);
         List<BusinessRuleListItemDto> rulesItems =
             businessRuleRepository.findAllByCountryOrderByIdentifierAsc(country.toUpperCase(Locale.ROOT));
         return rulesItems;
     }
 
     /**f
-     *  Gets  a business rule by hash.
+     *  Gets  a business rule by country and hash.
      */
     @Transactional
+    @Cacheable("business_rules")
     public BusinessRuleEntity getBusinessRuleByCountryAndHash(String country, String hash) {
-
+        log.debug("Get rule for country ({}) and hash ({}) executed.", country, hash);
         return  businessRuleRepository.findOneByCountryAndHash(country, hash);
     }
 
@@ -101,6 +108,7 @@ public class BusinessRuleService {
      * @param businessRules list of actual value sets
      */
     @Transactional
+    @CacheEvict(value="business_rules", allEntries=true)
     public void updateBusinessRules(List<BusinessRuleItem> businessRules) {
         List<String> ruleHashes =
             businessRules.stream().map(BusinessRuleItem::getHash).collect(Collectors.toList());
@@ -163,7 +171,6 @@ public class BusinessRuleService {
 
         return businessRuleItems;
     }
-
 
     /**
      * Gets a list of hash values of all stored business rules.

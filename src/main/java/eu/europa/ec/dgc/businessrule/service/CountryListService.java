@@ -27,6 +27,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +48,9 @@ public class CountryListService {
      * @return the country list.
      */
     @Transactional
+    @Cacheable("country_list")
     public CountryListEntity getCountryList() {
+        log.debug("Get country list executed");
         CountryListEntity  cle = countryListRepository.getFirstById(COUNTRY_LIST_ID);
         if (cle == null) {
             cle =  createCountryListEntity("[]");
@@ -61,6 +65,7 @@ public class CountryListService {
      * @param newCountryListData new country list data
      */
     @Transactional
+    @CacheEvict(value="country_list", allEntries=true)
     public void updateCountryList(String newCountryListData) {
         CountryListEntity oldList = getCountryList();
         if (!newCountryListData.equals(oldList.getRawData())) {
