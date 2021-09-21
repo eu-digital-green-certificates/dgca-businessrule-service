@@ -65,12 +65,15 @@ springdoc:
 dgc:
   allowedCorsUrls: https://dgc-gateway.example.com
   businessRulesDownload:
+    enabled: true
     timeInterval: 1800000
     lockLimit: 3600000
   valueSetsDownload:
+    enabled: true
     timeInterval: 1800000
     lockLimit: 3600000
   countryListDownload:
+    enabled: true
     timeInterval: 1800000
     lockLimit: 3600000
   gateway:

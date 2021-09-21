@@ -31,16 +31,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import net.minidev.json.JSONArray;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-
 /**
- * A service to download the valuesets, business rules and country list from the digital covid certificate gateway.
+ * A service to download the valuesets, business rules and country list from the
+ * digital covid certificate gateway.
  */
 @Slf4j
 @RequiredArgsConstructor
+@ConditionalOnProperty("dgc.gateway.connector.enabled")
 @Component
 @Profile("!btp")
 public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadService {
@@ -57,75 +60,107 @@ public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadServic
 
     private final CountryListService countryListService;
 
+    @Value("${dgc.valueSetsDownload.enabled}")
+    private boolean valueSetsDownloadEnabled;
+
+    @Value("${dgc.countryListDownload.enabled}")
+    private boolean countryListDownloadEnabled;
+    
+    @Value("${dgc.businessRulesDownload.enabled}")
+    private boolean businessRulesDownloadEnabled;
+    
     @Override
     @Scheduled(fixedDelayString = "${dgc.businessRulesDownload.timeInterval}")
-    @SchedulerLock(name = "GatewayDataDownloadService_downloadBusinessRules", lockAtLeastFor = "PT0S",
-        lockAtMostFor = "${dgc.businessRulesDownload.lockLimit}")
+    @SchedulerLock(name = "GatewayDataDownloadService_downloadBusinessRules", 
+                   lockAtLeastFor = "PT0S", 
+                   lockAtMostFor = "${dgc.businessRulesDownload.lockLimit}")
     public void downloadBusinessRules() {
         List<BusinessRuleItem> ruleItems;
+       
 
-        log.info("Business rules download started");
+        if (businessRulesDownloadEnabled) {
+            log.info("Business rules download started");
 
-        try {
-            ruleItems = businessRuleService.createBusinessRuleItemList(dgcRuleConnector.getValidationRules().flat());
-        } catch (NoSuchAlgorithmException e) {
-            log.error("Failed to hash business rules on download.",e);
-            return;
-        }
+            try {
+                ruleItems = businessRuleService
+                        .createBusinessRuleItemList(dgcRuleConnector.getValidationRules().flat());
+            } catch (NoSuchAlgorithmException e) {
+                log.error("Failed to hash business rules on download.", e);
+                return;
+            }
 
-        if (!ruleItems.isEmpty()) {
-            businessRuleService.updateBusinessRules(ruleItems);
+            if (!ruleItems.isEmpty()) {
+                businessRuleService.updateBusinessRules(ruleItems);
+            } else {
+                log.warn("The download of the business rules seems to fail, as the download connector "
+                        + "returns an empty business rules list.-> No data was changed.");
+            }
+
+            log.info("Business rules finished");
         } else {
-            log.warn("The download of the business rules seems to fail, as the download connector "
-                + "returns an empty business rules list.-> No data was changed.");
+            log.info("Business rules download disabled");
         }
 
-        log.info("Business rules finished");
     }
 
     @Override
     @Scheduled(fixedDelayString = "${dgc.valueSetsDownload.timeInterval}")
-    @SchedulerLock(name = "GatewayDataDownloadService_downloadValueSets", lockAtLeastFor = "PT0S",
-        lockAtMostFor = "${dgc.valueSetsDownload.lockLimit}")
+    @SchedulerLock(name = "GatewayDataDownloadService_downloadValueSets", 
+                   lockAtLeastFor = "PT0S", 
+                   lockAtMostFor = "${dgc.valueSetsDownload.lockLimit}")
     public void downloadValueSets() {
-        List<ValueSetItem> valueSetItems;
-        log.info("Valuesets download started");
 
-        try {
-            valueSetItems = valueSetService.createValueSetItemListFromMap(dgcValueSetConnector.getValueSets());
-        } catch (NoSuchAlgorithmException e) {
-            log.error("Failed to hash business rules on download.",e);
-            return;
-        }
+        if (valueSetsDownloadEnabled) {
+            List<ValueSetItem> valueSetItems;
+            log.info("Valuesets download started");
 
-        if (!valueSetItems.isEmpty()) {
-            valueSetService.updateValueSets(valueSetItems);
+            try {
+                valueSetItems = valueSetService.createValueSetItemListFromMap(dgcValueSetConnector.getValueSets());
+            } catch (NoSuchAlgorithmException e) {
+                log.error("Failed to hash business rules on download.", e);
+                return;
+            }
+
+            if (!valueSetItems.isEmpty()) {
+                valueSetService.updateValueSets(valueSetItems);
+            } else {
+                log.warn("The download of the value sets seems to fail, as the download connector "
+                        + "returns an empty value sets list.-> No data was changed.");
+            }
+
+            log.info("Valuesets download finished");
         } else {
-            log.warn("The download of the value sets seems to fail, as the download connector "
-                + "returns an empty value sets list.-> No data was changed.");
+            log.info("Valuesets download disaabled");
         }
 
-        log.info("Valuesets download finished");
     }
 
     @Override
     @Scheduled(fixedDelayString = "${dgc.countryListDownload.timeInterval}")
-    @SchedulerLock(name = "GatewayDataDownloadService_downloadCountryList", lockAtLeastFor = "PT0S",
-        lockAtMostFor = "${dgc.countryListDownload.lockLimit}")
+    @SchedulerLock(name = "GatewayDataDownloadService_downloadCountryList", 
+                   lockAtLeastFor = "PT0S", 
+                   lockAtMostFor = "${dgc.countryListDownload.lockLimit}")
     public void downloadCountryList() {
-        log.info("Country list download started");
+    
+        if (countryListDownloadEnabled) {
 
-        List<String> countryList = dgcCountryListConnector.getCountryList();
+            log.info("Country list download started");
 
-        if (!countryList.isEmpty()) {
-            String countryListJsonStr = JSONArray.toJSONString(countryList);
-            countryListService.updateCountryList(countryListJsonStr);
+            List<String> countryList = dgcCountryListConnector.getCountryList();
+
+            if (!countryList.isEmpty()) {
+                String countryListJsonStr = JSONArray.toJSONString(countryList);
+                countryListService.updateCountryList(countryListJsonStr);
+            } else {
+                log.warn("The download of the country list seems to fail, as the download connector "
+                        + "returns an empty country list.-> No data was changed.");
+            }
+
+            log.info("Country list download finished");
         } else {
-            log.warn("The download of the country list seems to fail, as the download connector "
-                + "returns an empty country list.-> No data was changed.");
+            log.info("Country list download disabled");
         }
 
-        log.info("Country list download finished");
     }
 
 }
