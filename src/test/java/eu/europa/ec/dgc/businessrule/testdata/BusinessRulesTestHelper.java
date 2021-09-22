@@ -4,6 +4,8 @@ import eu.europa.ec.dgc.businessrule.entity.BusinessRuleEntity;
 import eu.europa.ec.dgc.businessrule.entity.ValueSetEntity;
 import eu.europa.ec.dgc.businessrule.repository.BusinessRuleRepository;
 import eu.europa.ec.dgc.businessrule.repository.ValueSetRepository;
+import eu.europa.ec.dgc.businessrule.service.BusinessRuleService;
+import eu.europa.ec.dgc.businessrule.service.ValueSetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -163,6 +165,10 @@ public class BusinessRulesTestHelper {
 
     private final BusinessRuleRepository businessRuleRepository;
 
+    private final BusinessRuleService businessRuleService;
+
+    private final ValueSetService valueSetService;
+
     public void insertBusinessRule(String hash, String identifier, String country, String version, String data) {
         BusinessRuleEntity bre = new BusinessRuleEntity();
         bre.setHash(hash);
@@ -172,6 +178,7 @@ public class BusinessRulesTestHelper {
         bre.setRawData(data);
 
         businessRuleRepository.save(bre);
+        businessRuleService.businessRuleServiceInit();
     }
 
 
@@ -182,6 +189,7 @@ public class BusinessRulesTestHelper {
         vse.setRawData(data);
 
         valueSetRepository.save(vse);
+        valueSetService.valueSetServiceInit();
 
     }
 }

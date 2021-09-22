@@ -75,7 +75,7 @@ public class ValueSetService {
 
     @Cacheable("value_sets")
     public Optional<SignedListEntity> getValueSetsSignedList() {
-        log.debug("Get value sets list executed");
+        log.debug("Get value sets list (SignedList) executed");
         return signedListRepository.findById(ListType.ValueSets);
     }
 
