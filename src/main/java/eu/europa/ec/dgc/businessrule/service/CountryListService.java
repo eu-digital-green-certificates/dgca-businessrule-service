@@ -65,7 +65,7 @@ public class CountryListService {
      * @param newCountryListData new country list data
      */
     @Transactional
-    @CacheEvict(value="country_list", allEntries=true)
+    @CacheEvict(value = "country_list", allEntries = true)
     public void updateCountryList(String newCountryListData) {
         CountryListEntity oldList = getCountryList();
         if (!newCountryListData.equals(oldList.getRawData())) {

@@ -108,7 +108,7 @@ public class BusinessRuleService {
      * @param businessRules list of actual value sets
      */
     @Transactional
-    @CacheEvict(value="business_rules", allEntries=true)
+    @CacheEvict(value = "business_rules", allEntries = true)
     public void updateBusinessRules(List<BusinessRuleItem> businessRules) {
         List<String> ruleHashes =
             businessRules.stream().map(BusinessRuleItem::getHash).collect(Collectors.toList());

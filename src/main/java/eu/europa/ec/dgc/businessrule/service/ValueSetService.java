@@ -72,6 +72,7 @@ public class ValueSetService {
         List<ValueSetListItemDto> valueSetItems = valueSetRepository.findAllByOrderByIdAsc();
         return valueSetItems;
     }
+
     @Cacheable("value_sets")
     public Optional<SignedListEntity> getValueSetsSignedList() {
         log.debug("Get value sets list executed");
@@ -94,7 +95,7 @@ public class ValueSetService {
      * @param valueSets list of actual value sets
      */
     @Transactional
-    @CacheEvict(value="value_sets", allEntries=true)
+    @CacheEvict(value = "value_sets", allEntries = true)
     public void updateValueSets(List<ValueSetItem> valueSets) {
         List<String> valueSetsHashes = valueSets.stream().map(ValueSetItem::getHash).collect(Collectors.toList());
         List<String> alreadyStoredValueSets = getValueSetsHashList();
