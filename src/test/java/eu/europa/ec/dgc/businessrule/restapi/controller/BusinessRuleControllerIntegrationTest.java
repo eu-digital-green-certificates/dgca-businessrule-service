@@ -1,6 +1,7 @@
 package eu.europa.ec.dgc.businessrule.restapi.controller;
 
 import eu.europa.ec.dgc.businessrule.repository.BusinessRuleRepository;
+import eu.europa.ec.dgc.businessrule.service.BusinessRuleService;
 import eu.europa.ec.dgc.businessrule.testdata.BusinessRulesTestHelper;
 import eu.europa.ec.dgc.gateway.connector.DgcGatewayCountryListDownloadConnector;
 import eu.europa.ec.dgc.gateway.connector.DgcGatewayValidationRuleDownloadConnector;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,15 +38,23 @@ class BusinessRuleControllerIntegrationTest {
     BusinessRuleRepository businessRuleRepository;
 
     @Autowired
+    BusinessRuleService businessRuleService;
+
+    @Autowired
     BusinessRulesTestHelper businessRulesTestHelper;
 
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    CacheManager cacheManager;
 
     @BeforeEach
     void clearRepositoryData() {
+
         businessRuleRepository.deleteAll();
+        cacheManager.getCache("business_rules").clear();
+        businessRuleService.businessRuleServiceInit();
     }
 
     @Test

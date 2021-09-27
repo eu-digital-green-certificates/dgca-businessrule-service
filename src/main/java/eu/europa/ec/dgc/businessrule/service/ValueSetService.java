@@ -34,8 +34,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,15 +55,27 @@ public class ValueSetService {
     private final Optional<SigningService> signingService;
 
     /**
+     * Creates the signature for the empty value sets list after start up.
+     */
+    @PostConstruct
+    @Transactional
+    public void valueSetServiceInit() {
+        listSigningService.updateSignedList(getValueSetsList(), ListType.ValueSets);
+    }
+
+    /**
      *  Gets list of all value set ids and hashes.
      */
+    @Cacheable("value_sets")
     public List<ValueSetListItemDto> getValueSetsList() {
-
+        log.debug("Get value sets list executed");
         List<ValueSetListItemDto> valueSetItems = valueSetRepository.findAllByOrderByIdAsc();
         return valueSetItems;
     }
 
+    @Cacheable("value_sets")
     public Optional<SignedListEntity> getValueSetsSignedList() {
+        log.debug("Get value sets list (SignedList) executed");
         return signedListRepository.findById(ListType.ValueSets);
     }
 
@@ -69,8 +84,9 @@ public class ValueSetService {
      *  Gets a value set by its hash value.
      */
     @Transactional
+    @Cacheable("value_sets")
     public ValueSetEntity getValueSetByHash(String hash) {
-
+        log.debug("Get value set ({})executed", hash);
         return  valueSetRepository.findOneByHash(hash);
     }
 
@@ -79,6 +95,7 @@ public class ValueSetService {
      * @param valueSets list of actual value sets
      */
     @Transactional
+    @CacheEvict(value = "value_sets", allEntries = true)
     public void updateValueSets(List<ValueSetItem> valueSets) {
         List<String> valueSetsHashes = valueSets.stream().map(ValueSetItem::getHash).collect(Collectors.toList());
         List<String> alreadyStoredValueSets = getValueSetsHashList();
