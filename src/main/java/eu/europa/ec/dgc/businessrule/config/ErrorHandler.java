@@ -22,6 +22,7 @@ package eu.europa.ec.dgc.businessrule.config;
 
 import eu.europa.ec.dgc.businessrule.exception.DgcaBusinessRulesResponseException;
 import eu.europa.ec.dgc.businessrule.restapi.dto.ProblemReportDto;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +40,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Slf4j
 public class ErrorHandler extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler(IOException.class)
+    public void handleIoException() {
+        log.error("IOException thrown.");
+    }
 
     /**
      * Global Exception Handler to wrap exceptions into a readable JSON Object.
