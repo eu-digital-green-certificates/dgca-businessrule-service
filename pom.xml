@@ -24,24 +24,22 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- dependencies -->
-    <owasp.version>6.5.0</owasp.version>
-    <spring.boot.version>2.5.7</spring.boot.version>
-    <spring.cloud.version>3.0.5</spring.cloud.version>
-    <spring.test.version>5.3.9</spring.test.version>
-    <spring.security.version>5.5.2</spring.security.version>
-    <lombok.version>1.18.20</lombok.version>
-    <liquibase.version>4.4.3</liquibase.version>
-    <springdoc.version>1.5.10</springdoc.version>
-    <junit.version>5.7.2</junit.version>
+    <owasp.version>6.5.3</owasp.version>
+    <spring.boot.version>2.6.2</spring.boot.version>
+    <spring.test.version>5.3.12</spring.test.version>
+    <spring.security.version>5.6.0</spring.security.version>
+    <lombok.version>1.18.22</lombok.version>
+    <liquibase.version>4.6.2</liquibase.version>
+    <springdoc.version>1.6.0</springdoc.version>
+    <junit.version>5.8.1</junit.version>
     <mapstruct.version>1.4.2.Final</mapstruct.version>
-    <mockito.version>3.12.4</mockito.version>
-    <bcpkix.version>1.69</bcpkix.version>
+    <mockito.version>4.1.0</mockito.version>
+    <bcpkix.version>1.70</bcpkix.version>
     <okhttp.version>4.9.1</okhttp.version>
-    <shedlock.version>4.26.0</shedlock.version>
-    <dgc.lib.version>1.1.7</dgc.lib.version>
-    <h2.version>2.0.202</h2.version>
+    <shedlock.version>4.30.0</shedlock.version>
+    <dgc.lib.version>1.1.8</dgc.lib.version>
+    <h2.version>2.0.206</h2.version>
     <slf4j.version>1.7.32</slf4j.version>
-    <log4j2.version>2.16.0</log4j2.version> 
     <!-- plugins -->
     <plugin.checkstyle.version>3.1.2</plugin.checkstyle.version>
     <plugin.sonar.version>3.9.0.2155</plugin.sonar.version>
@@ -50,7 +48,7 @@
     <plugin.surefire.version>3.0.0-M5</plugin.surefire.version>
     <!-- license -->
     <license.projectName>EU Digital COVID Certificate Business Rule Service / dgca-businessrule-service</license.projectName>
-    <license.inceptionYear>2021</license.inceptionYear>
+    <license.inceptionYear>2022</license.inceptionYear>
     <license.licenseName>apache_v2</license.licenseName>
     <!-- github -->
     <github.organization>eu-digital-green-certificates</github.organization>
@@ -96,7 +94,7 @@
 
   <dependencyManagement>
     <dependencies>
-       <dependency>
+       <!-- dependency>
           <groupId>org.apache.logging.log4j</groupId>
           <artifactId>log4j-to-slf4j</artifactId>
           <version>${log4j2.version}</version>
@@ -110,7 +108,7 @@
        <groupId>org.apache.logging.log4j</groupId>
        <artifactId>log4j-core</artifactId>
        <version>${log4j2.version}</version>
-      </dependency>
+      </dependency -->
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
@@ -118,13 +116,13 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <dependency>
+      <!-- dependency>
        <groupId>org.springframework.cloud</groupId>
        <artifactId>spring-cloud-openfeign-dependencies</artifactId>
-       <version>3.0.5</version>
+       <version>3.1.0</version>
        <type>pom</type>
        <scope>import</scope>
-       </dependency>
+       </dependency -->
       <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
