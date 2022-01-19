@@ -37,7 +37,7 @@
     <bcpkix.version>1.70</bcpkix.version>
     <okhttp.version>4.9.1</okhttp.version>
     <shedlock.version>4.30.0</shedlock.version>
-    <dgc.lib.version>1.1.8</dgc.lib.version>
+    <dgc.lib.version>1.1.9</dgc.lib.version>
     <h2.version>2.0.206</h2.version>
     <slf4j.version>1.7.32</slf4j.version>
     <!-- plugins -->
@@ -48,7 +48,7 @@
     <plugin.surefire.version>3.0.0-M5</plugin.surefire.version>
     <!-- license -->
     <license.projectName>EU Digital COVID Certificate Business Rule Service / dgca-businessrule-service</license.projectName>
-    <license.inceptionYear>2022</license.inceptionYear>
+    <license.inceptionYear>2021</license.inceptionYear>
     <license.licenseName>apache_v2</license.licenseName>
     <!-- github -->
     <github.organization>eu-digital-green-certificates</github.organization>
@@ -94,21 +94,6 @@
 
   <dependencyManagement>
     <dependencies>
-       <!-- dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-to-slf4j</artifactId>
-          <version>${log4j2.version}</version>
-       </dependency>
-      <dependency>
-       <groupId>org.apache.logging.log4j</groupId>
-       <artifactId>log4j-api</artifactId>
-        <version>${log4j2.version}</version>
-     </dependency>
-     <dependency>
-       <groupId>org.apache.logging.log4j</groupId>
-       <artifactId>log4j-core</artifactId>
-       <version>${log4j2.version}</version>
-      </dependency -->
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
@@ -116,13 +101,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <!-- dependency>
-       <groupId>org.springframework.cloud</groupId>
-       <artifactId>spring-cloud-openfeign-dependencies</artifactId>
-       <version>3.1.0</version>
-       <type>pom</type>
-       <scope>import</scope>
-       </dependency -->
       <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
