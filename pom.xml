@@ -25,7 +25,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- dependencies -->
     <owasp.version>6.5.3</owasp.version>
-    <spring.boot.version>2.6.2</spring.boot.version>
+    <spring.boot.version>2.6.3</spring.boot.version>
     <spring.test.version>5.3.12</spring.test.version>
     <spring.security.version>5.6.0</spring.security.version>
     <lombok.version>1.18.22</lombok.version>
@@ -37,7 +37,7 @@
     <bcpkix.version>1.70</bcpkix.version>
     <okhttp.version>4.9.1</okhttp.version>
     <shedlock.version>4.30.0</shedlock.version>
-    <dgc.lib.version>1.1.9</dgc.lib.version>
+    <dgc.lib.version>1.1.13</dgc.lib.version>
     <h2.version>2.0.206</h2.version>
     <slf4j.version>1.7.32</slf4j.version>
     <!-- plugins -->
