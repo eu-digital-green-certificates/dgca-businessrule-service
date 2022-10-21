@@ -3,6 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.6.7</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+
 
   <groupId>eu.europa.ec.dgc</groupId>
   <artifactId>dgca-businessrule-service</artifactId>
@@ -25,19 +32,19 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- dependencies -->
     <owasp.version>6.5.3</owasp.version>
-    <spring.boot.version>2.6.2</spring.boot.version>
-    <spring.test.version>5.3.12</spring.test.version>
-    <spring.security.version>5.6.0</spring.security.version>
+    <spring.boot.version>2.6.7</spring.boot.version>
+    <spring.test.version>5.3.19</spring.test.version>
+    <spring.security.version>5.6.2</spring.security.version>
     <lombok.version>1.18.22</lombok.version>
-    <liquibase.version>4.6.2</liquibase.version>
+    <liquibase.version>4.10.0</liquibase.version>
     <springdoc.version>1.6.0</springdoc.version>
-    <junit.version>5.8.1</junit.version>
+    <junit.jupiter.version>5.8.2</junit.jupiter.version>
     <mapstruct.version>1.4.2.Final</mapstruct.version>
     <mockito.version>4.1.0</mockito.version>
     <bcpkix.version>1.70</bcpkix.version>
     <okhttp.version>4.9.1</okhttp.version>
     <shedlock.version>4.30.0</shedlock.version>
-    <dgc.lib.version>1.1.9</dgc.lib.version>
+    <dgc.lib.version>1.1.13</dgc.lib.version>
     <h2.version>2.0.206</h2.version>
     <slf4j.version>1.7.32</slf4j.version>
     <!-- plugins -->
@@ -172,7 +179,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>${junit.version}</version>
+      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
