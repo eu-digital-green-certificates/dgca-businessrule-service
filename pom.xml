@@ -42,7 +42,6 @@
     <shedlock.version>5.4.0</shedlock.version>
     <dgc.lib.version>2.0.2</dgc.lib.version>
     <h2.version>2.1.214</h2.version>
-    <slf4j.version>1.7.32</slf4j.version>
     <sap.cloud.sdk.version>4.16.0</sap.cloud.sdk.version>
     <sap.cloud.logging.version>3.7.0</sap.cloud.logging.version>
     <!-- plugins -->
@@ -97,20 +96,6 @@
     </repository>
   </distributionManagement>
 
-  <dependencyManagement>
-    <dependencies>
-
-
-      <dependency>
-        <groupId>com.sap.cloud.sdk</groupId>
-        <artifactId>sdk-bom</artifactId>
-        <version>4.16.0</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
     <dependency>
       <groupId>eu.europa.ec.dgc</groupId>
@@ -136,19 +121,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.micrometer</groupId>
-      <artifactId>micrometer-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.micrometer</groupId>
-      <artifactId>micrometer-registry-prometheus</artifactId>
     </dependency>
     <dependency>
       <groupId>org.liquibase</groupId>
@@ -208,23 +180,17 @@
     <dependency>
       <groupId>io.pivotal.cfenv</groupId>
       <artifactId>java-cfenv-boot</artifactId>
-      <version>2.4.2</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>2.4.1</version>
     </dependency>
     <dependency>
       <groupId>com.sap.cloud.sdk.cloudplatform</groupId>
       <artifactId>scp-cf</artifactId>
-      <version>${sap.cloud.sdk.version}</version>
+      <version>3.75.0</version>
     </dependency>
     <dependency>
       <groupId>com.sap.hcp.cf.logging</groupId>
       <artifactId>cf-java-logging-support-logback</artifactId>
-      <version>${sap.cloud.logging.version}</version>
+      <version>3.6.2</version>
     </dependency>
     <dependency>
       <groupId>com.nimbusds</groupId>
@@ -295,10 +261,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-      <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <executions>
@@ -316,7 +278,6 @@
         <configuration>
           <configLocation>./codestyle/checkstyle.xml</configLocation>
           <excludes>./target/**/*</excludes>
-          <encoding>UTF-8</encoding>
           <consoleOutput>true</consoleOutput>
           <failsOnError>true</failsOnError>
           <violationSeverity>warning</violationSeverity>
