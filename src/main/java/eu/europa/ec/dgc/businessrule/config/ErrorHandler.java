@@ -51,7 +51,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         if (e instanceof ResponseStatusException) {
             DgcaBusinessRulesResponseException de = (DgcaBusinessRulesResponseException) e;
             return ResponseEntity
-                .status(((ResponseStatusException) e).getStatus())
+                .status(((ResponseStatusException) e).getStatus().value())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ProblemReportDto(de.getCode(), de.getProblem(), de.getSentValues(), de.getDetails()));
         } else {

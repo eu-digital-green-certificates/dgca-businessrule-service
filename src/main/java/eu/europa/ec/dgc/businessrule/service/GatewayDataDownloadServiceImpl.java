@@ -20,6 +20,7 @@
 
 package eu.europa.ec.dgc.businessrule.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.dgc.businessrule.model.BusinessRuleItem;
 import eu.europa.ec.dgc.businessrule.model.ValueSetItem;
 import eu.europa.ec.dgc.gateway.connector.DgcGatewayCountryListDownloadConnector;
@@ -30,12 +31,12 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
-import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
 
 /**
  * A service to download the valuesets, business rules and country list from the
@@ -47,6 +48,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Profile("!btp")
 public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadService {
+
+    private final ObjectMapper objectMapper;
 
     private final DgcGatewayValidationRuleDownloadConnector dgcRuleConnector;
 
@@ -149,8 +152,14 @@ public class GatewayDataDownloadServiceImpl implements GatewayDataDownloadServic
             List<String> countryList = dgcCountryListConnector.getCountryList();
 
             if (!countryList.isEmpty()) {
-                String countryListJsonStr = JSONArray.toJSONString(countryList);
-                countryListService.updateCountryList(countryListJsonStr);
+                
+                try {
+                    String countryListJsonStr = objectMapper.writeValueAsString(countryList);
+                    countryListService.updateCountryList(countryListJsonStr);
+                } catch (Exception e) {
+                    log.error("Failed to convert List to JSON", e);
+                    return;
+                }
             } else {
                 log.warn("The download of the country list seems to fail, as the download connector "
                         + "returns an empty country list.-> No data was changed.");
