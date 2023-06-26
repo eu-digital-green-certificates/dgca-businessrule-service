@@ -32,7 +32,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- dependencies -->
-    <owasp.version>6.5.3</owasp.version>
+    <owasp.version>8.3.1</owasp.version>
     <lombok.version>1.18.28</lombok.version>
     <liquibase.version>4.22.0</liquibase.version>
     <springdoc.version>2.1.0</springdoc.version>
@@ -97,6 +97,18 @@
   </distributionManagement>
 
   <dependencies>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>32.0.1-jre</version>
+    </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>2.0</version>
+    </dependency>
+
     <dependency>
       <groupId>eu.europa.ec.dgc</groupId>
       <artifactId>dgc-lib</artifactId>
